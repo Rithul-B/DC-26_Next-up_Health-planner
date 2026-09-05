@@ -1,7 +1,6 @@
 "use client";
 
-import { EaseMark, HouseMark, TimeMark } from "@/components/marks";
-import { clockPeriod } from "@/lib/period";
+import { NavGlyph } from "@/components/marks";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -15,7 +14,6 @@ const links = [
 
 export function BottomNav() {
   const pathname = usePathname();
-  const period = clockPeriod();
 
   return (
     <nav
@@ -40,15 +38,7 @@ export function BottomNav() {
                     : "text-foreground/80 hover:bg-muted",
                 )}
               >
-                <span className="h-5 w-5">
-                  {link.mark === "now" || link.mark === "today" ? (
-                    <TimeMark period={period} className="h-5 w-5" />
-                  ) : link.mark === "family" ? (
-                    <HouseMark className="h-5 w-5" />
-                  ) : (
-                    <EaseMark className="h-5 w-5" />
-                  )}
-                </span>
+                <NavGlyph name={link.mark} className="h-5 w-5" />
                 {link.label}
               </Link>
             </li>

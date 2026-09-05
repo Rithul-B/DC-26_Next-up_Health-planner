@@ -4,22 +4,18 @@ import { cn } from "@/lib/utils";
 
 type MarkProps = {
   className?: string;
-  title?: string;
 };
 
 function Frame({
   className,
-  title,
   children,
 }: MarkProps & { children: ReactNode }) {
   return (
     <svg
       viewBox="0 0 96 96"
       className={cn("mark", className)}
-      aria-hidden={title ? undefined : true}
-      role={title ? "img" : undefined}
+      aria-hidden
     >
-      {title ? <title>{title}</title> : null}
       {children}
     </svg>
   );
@@ -34,7 +30,7 @@ export function TimeMark({
 }) {
   if (period === "morning") {
     return (
-      <Frame className={className} title="Morning">
+      <Frame className={className}>
         <circle className="mark-fill-soft" cx="48" cy="52" r="22" />
         <circle className="mark-fill" cx="48" cy="40" r="14" />
         <path
@@ -46,7 +42,7 @@ export function TimeMark({
   }
   if (period === "afternoon") {
     return (
-      <Frame className={className} title="Afternoon">
+      <Frame className={className}>
         <path className="mark-fill-soft" d="M8 70h80v10H8z" />
         <circle className="mark-fill" cx="62" cy="38" r="16" />
         <path className="mark-stroke" d="M12 70c10-18 22-28 36-28" />
@@ -55,7 +51,7 @@ export function TimeMark({
   }
   if (period === "evening") {
     return (
-      <Frame className={className} title="Evening">
+      <Frame className={className}>
         <path className="mark-fill-soft" d="M18 78h60v6H18z" />
         <path className="mark-fill" d="M38 78V44h20v34" />
         <circle className="mark-fill" cx="48" cy="34" r="10" />
@@ -64,7 +60,7 @@ export function TimeMark({
     );
   }
   return (
-    <Frame className={className} title="Night">
+    <Frame className={className}>
       <path
         className="mark-fill"
         d="M58 20a22 22 0 1 0 16 38 26 26 0 1 1-16-38z"
@@ -78,7 +74,7 @@ export function TimeMark({
 
 export function DoneMark({ className }: MarkProps) {
   return (
-    <Frame className={className} title="Done">
+    <Frame className={className}>
       <circle className="mark-fill-soft" cx="48" cy="48" r="28" />
       <path className="mark-stroke-thick" d="M30 50l12 12 24-28" />
     </Frame>
@@ -87,7 +83,7 @@ export function DoneMark({ className }: MarkProps) {
 
 export function EmptyMark({ className }: MarkProps) {
   return (
-    <Frame className={className} title="Nothing waiting">
+    <Frame className={className}>
       <ellipse className="mark-fill-soft" cx="48" cy="70" rx="28" ry="8" />
       <path
         className="mark-stroke"
@@ -100,7 +96,7 @@ export function EmptyMark({ className }: MarkProps) {
 
 export function HouseMark({ className }: MarkProps) {
   return (
-    <Frame className={className} title="Family">
+    <Frame className={className}>
       <path className="mark-fill-soft" d="M16 46l32-24 32 24v30H16z" />
       <path className="mark-stroke" d="M18 46L48 22l30 24v30H18z" />
       <path className="mark-fill" d="M42 56h12v20H42z" />
@@ -110,7 +106,7 @@ export function HouseMark({ className }: MarkProps) {
 
 export function HelperMark({ className }: MarkProps) {
   return (
-    <Frame className={className} title="Helper">
+    <Frame className={className}>
       <circle className="mark-fill-soft" cx="36" cy="36" r="12" />
       <circle className="mark-fill" cx="62" cy="40" r="10" />
       <path className="mark-stroke" d="M16 72c4-16 16-24 28-24s22 8 26 20" />
@@ -120,7 +116,7 @@ export function HelperMark({ className }: MarkProps) {
 
 export function EaseMark({ className }: MarkProps) {
   return (
-    <Frame className={className} title="Easier">
+    <Frame className={className}>
       <path className="mark-fill-soft" d="M20 58c8-22 20-34 28-34s20 12 28 34" />
       <path className="mark-stroke" d="M22 58c8-20 18-30 26-30s18 10 26 30" />
       <circle className="mark-fill" cx="48" cy="40" r="5" />
@@ -137,7 +133,7 @@ export function FeelingMark({
 }) {
   if (feeling === "good") {
     return (
-      <Frame className={className} title="Good">
+      <Frame className={className}>
         <circle className="mark-fill-soft" cx="48" cy="48" r="26" />
         <path className="mark-stroke-thick" d="M32 50c6 12 26 12 32 0" />
       </Frame>
@@ -145,14 +141,14 @@ export function FeelingMark({
   }
   if (feeling === "ok") {
     return (
-      <Frame className={className} title="Okay">
+      <Frame className={className}>
         <circle className="mark-fill-soft" cx="48" cy="48" r="26" />
         <path className="mark-stroke-thick" d="M32 52h32" />
       </Frame>
     );
   }
   return (
-    <Frame className={className} title="Hard">
+    <Frame className={className}>
       <circle className="mark-fill-soft" cx="48" cy="48" r="26" />
       <path className="mark-stroke-thick" d="M32 58c8-12 24-12 32 0" />
     </Frame>
@@ -201,6 +197,43 @@ export function FamilyKindMark({
   return (
     <Frame className={className}>
       <circle className="mark-fill-soft" cx="48" cy="48" r="22" />
+    </Frame>
+  );
+}
+
+export function NavGlyph({
+  name,
+  className,
+}: {
+  name: "now" | "today" | "family" | "easier";
+  className?: string;
+}) {
+  if (name === "now") {
+    return (
+      <Frame className={className}>
+        <circle className="mark-fill" cx="48" cy="48" r="16" />
+        <circle className="mark-stroke" cx="48" cy="48" r="26" />
+      </Frame>
+    );
+  }
+  if (name === "today") {
+    return (
+      <Frame className={className}>
+        <path className="mark-stroke" d="M28 30h40M28 48h40M28 66h28" />
+      </Frame>
+    );
+  }
+  if (name === "family") {
+    return (
+      <Frame className={className}>
+        <path className="mark-stroke" d="M20 46L48 22l28 24v28H20z" />
+        <path className="mark-fill" d="M42 56h12v18H42z" />
+      </Frame>
+    );
+  }
+  return (
+    <Frame className={className}>
+      <path className="mark-stroke" d="M22 62c8-22 18-32 26-32s18 10 26 32" />
     </Frame>
   );
 }

@@ -72,9 +72,10 @@ export function householdLine(
   weight: Weight,
 ): string {
   if (weight === "critical") return name;
-  if (waiting === 0) return `${name} is clear`;
-  if (waiting === 1) return `${name} has one`;
-  return `${name} has ${waiting}`;
+  const you = name === "You";
+  if (waiting === 0) return you ? "You’re clear" : `${name} is clear`;
+  if (waiting === 1) return you ? "You have one" : `${name} has one`;
+  return you ? `You have ${waiting}` : `${name} has ${waiting}`;
 }
 
 export function nextHeading(weight: Weight, style: TalkStyle): string {
