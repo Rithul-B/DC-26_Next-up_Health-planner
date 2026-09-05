@@ -15,7 +15,11 @@ export default function ItemPage() {
     return (
       <div className="space-y-4">
         <h1 className="text-3xl font-semibold">That step is gone</h1>
-        <Button render={<Link href="/today" />} className="h-12 rounded-2xl">
+        <Button
+          nativeButton={false}
+          render={<Link href="/today" />}
+          className="h-12 rounded-2xl"
+        >
           Back to today
         </Button>
       </div>
@@ -27,6 +31,7 @@ export default function ItemPage() {
       <div className="space-y-4">
         <h1 className="text-3xl font-semibold">Already done</h1>
         <Button
+          nativeButton={false}
           render={<Link href="/today" />}
           variant="outline"
           className="h-12 rounded-2xl"
@@ -41,6 +46,7 @@ export default function ItemPage() {
     <div className="space-y-6">
       <NextCard item={item} />
       <Button
+        nativeButton={false}
         render={<Link href="/today" />}
         variant="ghost"
         className="h-12 px-1 text-base"

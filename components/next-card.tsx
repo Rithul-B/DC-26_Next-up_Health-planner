@@ -62,6 +62,7 @@ export function NextCard({
         {item.weight === "critical" ? (
           <AlertDialog>
             <AlertDialogTrigger
+              nativeButton={false}
               render={
                 <Button className="h-16 w-full rounded-2xl text-xl font-semibold">
                   I did this

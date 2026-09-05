@@ -25,7 +25,11 @@ export default function PeoplePage() {
         <p className="text-lg text-muted-foreground">
           Only a helper can add a person.
         </p>
-        <Button render={<Link href="/settings" />} className="h-12 rounded-2xl">
+        <Button
+          nativeButton={false}
+          render={<Link href="/settings" />}
+          className="h-12 rounded-2xl"
+        >
           Go to Easier
         </Button>
       </div>

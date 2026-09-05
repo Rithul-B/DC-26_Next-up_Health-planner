@@ -135,6 +135,7 @@ function MarkDoneButton({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
+        nativeButton={false}
         render={
           <Button variant="outline" className="h-12 rounded-2xl text-base">
             Mark visit done
@@ -197,6 +198,7 @@ function PromoteButton({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
+        nativeButton={false}
         render={
           <Button variant="ghost" className="h-12 rounded-2xl text-base">
             Move to their Today
@@ -260,6 +262,7 @@ function AddFamilyForm({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
+        nativeButton={false}
         render={
           <Button className="h-14 rounded-2xl text-lg font-semibold">
             Add a checkup

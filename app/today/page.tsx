@@ -76,6 +76,7 @@ export default function TodayPage() {
             : "Not filled in yet."}
         </p>
         <Button
+          nativeButton={false}
           render={<Link href="/check-in" />}
           variant="outline"
           className="mt-4 h-12 rounded-2xl px-5 text-base"

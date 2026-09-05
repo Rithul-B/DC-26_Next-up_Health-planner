@@ -42,6 +42,7 @@ export default function NowPage() {
               : "Today is done."}
           </p>
           <Button
+            nativeButton={false}
             render={<Link href="/today" />}
             variant="outline"
             className="mt-6 h-12 rounded-2xl px-5 text-base"
@@ -53,6 +54,7 @@ export default function NowPage() {
 
       {helper ? (
         <Button
+          nativeButton={false}
           render={<Link href="/helper" />}
           variant="ghost"
           className="h-12 justify-start px-1 text-base underline-offset-4 hover:underline"

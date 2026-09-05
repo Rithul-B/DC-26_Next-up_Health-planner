@@ -38,6 +38,7 @@ export default function HelperPage() {
           Turn on “I’m helping” in Easier to add or change personal steps.
         </p>
         <Button
+          nativeButton={false}
           render={<Link href="/settings" />}
           className="h-12 rounded-2xl text-base"
         >
@@ -89,6 +90,7 @@ export default function HelperPage() {
       </ul>
 
       <Button
+        nativeButton={false}
         render={<Link href="/people" />}
         variant="outline"
         className="h-12 rounded-2xl text-base"
@@ -125,6 +127,7 @@ function AddItemForm({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
+        nativeButton={false}
         render={
           <Button className="h-14 rounded-2xl text-lg font-semibold">
             Add a personal step

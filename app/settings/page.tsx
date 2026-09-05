@@ -37,6 +37,7 @@ export default function SettingsPage() {
             <p className="text-sm text-muted-foreground">Looking at</p>
             <PersonSwitch />
             <Button
+              nativeButton={false}
               render={<Link href="/helper" />}
               variant="outline"
               className="h-12 rounded-2xl text-base"
