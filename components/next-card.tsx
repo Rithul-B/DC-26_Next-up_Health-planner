@@ -20,18 +20,27 @@ import { useState } from "react";
 export function NextCard({
   item,
   onDone,
+  onLater,
 }: {
   item: PersonalItem;
   onDone?: () => void;
+  onLater?: () => void;
 }) {
   const { person, markDone, postpone, state } = useStore();
   const [justDone, setJustDone] = useState(false);
   const helper = state.role === "helper";
+  const canLeaveForLater =
+    item.weight === "everyday" || (item.weight === "critical" && helper);
 
   function finish() {
     markDone(item.id);
     setJustDone(true);
     onDone?.();
+  }
+
+  function later() {
+    postpone(item.id);
+    onLater?.();
   }
 
   if (justDone) {
@@ -91,13 +100,15 @@ export function NextCard({
           </Button>
         )}
 
-        {item.weight === "critical" && helper ? (
+        {canLeaveForLater ? (
           <Button
             variant="outline"
             className="h-12 w-full rounded-2xl text-base"
-            onClick={() => postpone(item.id)}
+            onClick={later}
           >
-            Postpone for today
+            {item.weight === "critical"
+              ? "Postpone for today"
+              : "Later today"}
           </Button>
         ) : null}
       </div>

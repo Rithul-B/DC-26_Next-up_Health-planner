@@ -6,7 +6,7 @@ Personal routines (meds, today’s visits, check-ins) stay on **Now** and **Toda
 
 The tone stays calm and simple, then gets quieter when a step is **Important** or **Critical**.
 
-Data stays in this browser (`localStorage`). There is no login, no cloud sync, and this is not a medical device.
+Data stays in this browser (`localStorage`). There is no login, no cloud sync, and this is not a medical device. It is not HIPAA-covered care.
 
 ## Run locally
 
@@ -32,21 +32,27 @@ Household on one device: **You**, **Dad**, **Sam**.
 
 ## GitHub
 
-This repo is a normal Next.js app. Push `main` and work from there.
-
-If you are still in a new project without a GitHub repository, create the repo from the project view, then clone or connect it as usual.
+This is a normal Next.js repo. Push `main`, then connect it from GitHub like any other app.
 
 ## Vercel
 
-1. Import the GitHub repo in [Vercel](https://vercel.com/new).
+We cannot log into your Vercel account from here. To host it:
+
+1. Import this GitHub repo in [Vercel](https://vercel.com/new).
 2. Framework preset: **Next.js**. Build command `npm run build`. Output is handled by Next.
 3. No environment variables are required.
 
-Or from a machine with the Vercel CLI:
+Or from a machine signed into Vercel:
 
 ```bash
 npx vercel
 ```
+
+`.vercel` is gitignored so local CLI link files stay off the repo.
+
+## Cursor / Code apps
+
+Point a new Cloud Agent or Code app at this GitHub repo. No extra services or secrets are required.
 
 ## Stack
 

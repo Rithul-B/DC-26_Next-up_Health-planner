@@ -7,11 +7,14 @@ import { WHOLE_FAMILY } from "@/lib/types";
 export function PersonSwitch({
   includeFamily,
   onPick,
+  value,
 }: {
   includeFamily?: boolean;
   onPick?: (id: string) => void;
+  value?: string;
 }) {
   const { state, setActivePerson } = useStore();
+  const selected = value ?? state.activePersonId;
 
   return (
     <div
@@ -21,7 +24,7 @@ export function PersonSwitch({
     >
       {includeFamily ? (
         <Chip
-          active={false}
+          active={selected === WHOLE_FAMILY}
           label="Everyone"
           onClick={() => onPick?.(WHOLE_FAMILY)}
         />
@@ -29,7 +32,7 @@ export function PersonSwitch({
       {state.people.map((person) => (
         <Chip
           key={person.id}
-          active={!onPick && state.activePersonId === person.id}
+          active={selected === person.id}
           label={person.name}
           onClick={() => {
             if (onPick) onPick(person.id);

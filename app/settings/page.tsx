@@ -22,15 +22,23 @@ export default function SettingsPage() {
 
       <section className="space-y-5 rounded-3xl border bg-card px-5 py-6">
         <h2 className="text-xl font-semibold">Who is using this</h2>
-        <div className="flex items-center justify-between gap-4">
-          <Label htmlFor="helper" className="text-base leading-snug">
-            I’m helping someone
-          </Label>
-          <Switch
-            id="helper"
-            checked={state.role === "helper"}
-            onCheckedChange={(on) => setRole(on ? "helper" : "person")}
-          />
+        <div className="flex flex-col gap-2" role="group" aria-label="Role">
+          <Button
+            type="button"
+            variant={state.role === "person" ? "default" : "outline"}
+            className="h-14 justify-start rounded-2xl text-base"
+            onClick={() => setRole("person")}
+          >
+            For me
+          </Button>
+          <Button
+            type="button"
+            variant={state.role === "helper" ? "default" : "outline"}
+            className="h-14 justify-start rounded-2xl text-base"
+            onClick={() => setRole("helper")}
+          >
+            I’m helping
+          </Button>
         </div>
         {state.role === "helper" ? (
           <div className="space-y-2">
@@ -73,8 +81,8 @@ export default function SettingsPage() {
       <section className="rounded-3xl border bg-card px-5 py-6">
         <h2 className="text-xl font-semibold">This is a demo</h2>
         <p className="mt-2 text-muted-foreground">
-          Next Up does not replace a clinician. Data stays in this browser. Not
-          for emergencies.
+          Next Up is not medical advice and not a medical device. It is not
+          HIPAA-covered. Data stays in this browser. Not for emergencies.
         </p>
         <Button
           variant="ghost"

@@ -4,11 +4,12 @@ import { NextCard } from "@/components/next-card";
 import { Button } from "@/components/ui/button";
 import { useStore } from "@/lib/store";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 export default function ItemPage() {
   const params = useParams<{ id: string }>();
   const { state, isDone } = useStore();
+  const router = useRouter();
   const item = state.items.find((row) => row.id === params.id);
 
   if (!item) {
@@ -44,7 +45,7 @@ export default function ItemPage() {
 
   return (
     <div className="space-y-6">
-      <NextCard item={item} />
+      <NextCard item={item} onLater={() => router.push("/today")} />
       <Button
         nativeButton={false}
         render={<Link href="/today" />}

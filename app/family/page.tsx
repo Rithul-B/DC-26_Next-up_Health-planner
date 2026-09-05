@@ -62,12 +62,19 @@ export default function FamilyPage() {
         </p>
       </header>
 
+      {helper ? (
+        <div className="space-y-2">
+          <p className="text-sm font-medium">Looking at</p>
+          <PersonSwitch />
+        </div>
+      ) : null}
+
       <div className="flex flex-wrap gap-2" role="group" aria-label="Filter">
         {(
           [
             ["all", "Everyone"],
             ["soon", "Due soon"],
-            ["done", "On track"],
+            ["done", "Done"],
           ] as const
         ).map(([id, label]) => (
           <Button
@@ -299,6 +306,7 @@ function AddFamilyForm({
             <Label>Who</Label>
             <PersonSwitch
               includeFamily
+              value={who}
               onPick={(id) => setWho(id)}
             />
             <p className="text-sm text-muted-foreground">

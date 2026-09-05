@@ -8,8 +8,16 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 
 export default function TodayPage() {
-  const { person, todayItems, isDone, isPostponed, undoDone, state, checkIn } =
-    useStore();
+  const {
+    person,
+    todayItems,
+    isDone,
+    isPostponed,
+    undoDone,
+    unpostpone,
+    state,
+    checkIn,
+  } = useStore();
   const helper = state.role === "helper";
 
   return (
@@ -56,6 +64,15 @@ export default function TodayPage() {
                     onClick={() => undoDone(item.id)}
                   >
                     Undo
+                  </Button>
+                ) : null}
+                {later && !done ? (
+                  <Button
+                    variant="ghost"
+                    className="mt-1 h-11 px-2 text-base"
+                    onClick={() => unpostpone(item.id)}
+                  >
+                    Bring back
                   </Button>
                 ) : null}
               </li>

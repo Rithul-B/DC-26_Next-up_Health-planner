@@ -8,6 +8,7 @@ import {
   useMemo,
   useState,
 } from "react";
+import { familyKindLabels } from "@/lib/copy";
 import { completionKey, todayKey } from "@/lib/dates";
 import { seedState, STORE_KEY } from "@/lib/seed";
 import type {
@@ -43,7 +44,9 @@ type Store = {
   setCheckIn: (feeling: CheckInFeeling) => void;
   addPerson: (person: Omit<Person, "id">) => void;
   addItem: (item: Omit<PersonalItem, "id">) => string;
+  updateItem: (itemId: string, patch: Partial<Omit<PersonalItem, "id">>) => void;
   removeItem: (itemId: string) => void;
+  unpostpone: (itemId: string) => void;
   addFamily: (record: Omit<FamilyRecord, "id">) => void;
   markFamilyDone: (id: string, nextDue: string, note?: string) => void;
   promoteFamily: (id: string, weight: Weight) => string | null;
@@ -59,9 +62,21 @@ function loadState(): AppState {
   try {
     const raw = localStorage.getItem(STORE_KEY);
     if (!raw) return seedState;
-    const parsed = JSON.parse(raw) as AppState;
+    const parsed = JSON.parse(raw) as Partial<AppState>;
     if (!parsed.people?.length) return seedState;
-    return { ...seedState, ...parsed };
+    return {
+      ...seedState,
+      ...parsed,
+      people: parsed.people,
+      ease: { ...seedState.ease, ...parsed.ease },
+      items: parsed.items ?? seedState.items,
+      completions: parsed.completions ?? {},
+      postponed: parsed.postponed ?? {},
+      checkIns: parsed.checkIns ?? {},
+      family: parsed.family ?? seedState.family,
+      role: parsed.role === "helper" ? "helper" : "person",
+      activePersonId: parsed.activePersonId ?? seedState.activePersonId,
+    };
   } catch {
     return seedState;
   }
@@ -156,6 +171,12 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         list.add(itemId);
         return { ...s, postponed: { ...s.postponed, [key]: [...list] } };
       }),
+    unpostpone: (itemId) =>
+      patch((s) => {
+        const key = completionKey(s.activePersonId);
+        const list = (s.postponed[key] ?? []).filter((id) => id !== itemId);
+        return { ...s, postponed: { ...s.postponed, [key]: list } };
+      }),
     setCheckIn: (feeling) =>
       patch((s) => ({
         ...s,
@@ -178,6 +199,13 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       patch((s) => ({ ...s, items: [...s.items, { ...item, id }] }));
       return id;
     },
+    updateItem: (itemId, next) =>
+      patch((s) => ({
+        ...s,
+        items: s.items.map((row) =>
+          row.id === itemId ? { ...row, ...next } : row,
+        ),
+      })),
     removeItem: (itemId) =>
       patch((s) => ({ ...s, items: s.items.filter((i) => i.id !== itemId) })),
     addFamily: (record) =>
@@ -205,7 +233,10 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
             id: itemId,
             personId,
             kind: "appointment",
-            title: `${row.kind === "other" ? "Follow-up" : row.kind} follow-up`,
+            title:
+              row.kind === "other"
+                ? "Follow-up"
+                : `${familyKindLabels[row.kind]} follow-up`,
             timeOfDay: "morning",
             weight,
             note: row.note,

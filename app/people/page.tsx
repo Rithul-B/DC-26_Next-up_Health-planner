@@ -39,12 +39,28 @@ export default function PeoplePage() {
   return (
     <div className="flex flex-1 flex-col gap-8">
       <header className="space-y-2">
-        <h1 className="text-4xl font-semibold tracking-tight">Add a person</h1>
+        <h1 className="text-4xl font-semibold tracking-tight">People</h1>
         <p className="text-lg text-muted-foreground">
-          First name and how to talk to them. Not a login.
+          Who personal Today belongs to. First name and how to talk to them.
+          Not a login.
         </p>
       </header>
 
+      <ul className="space-y-2">
+        {state.people.map((person) => (
+          <li
+            key={person.id}
+            className="rounded-3xl border bg-card px-5 py-4 text-lg font-semibold"
+          >
+            {person.name}
+            <span className="mt-1 block text-sm font-normal text-muted-foreground">
+              {talkStyleLabels[person.talkStyle]}
+            </span>
+          </li>
+        ))}
+      </ul>
+
+      <h2 className="text-xl font-semibold">Add a person</h2>
       <form
         className="space-y-5"
         onSubmit={(e) => {
