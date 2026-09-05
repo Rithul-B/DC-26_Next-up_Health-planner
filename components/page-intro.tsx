@@ -16,7 +16,11 @@ export function PageIntro({
 }) {
   return (
     <header className={cn("page-intro", quiet && "page-intro-quiet")}>
-      {mark ? <div className="page-intro-mark">{mark}</div> : null}
+        {mark ? (
+          <div className="page-intro-mark" aria-hidden>
+            {mark}
+          </div>
+        ) : null}
       <div className="page-intro-copy">
         {kicker ? <p className="page-kicker">{kicker}</p> : null}
         <h1 className="page-title">{title}</h1>
