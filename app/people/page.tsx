@@ -1,5 +1,8 @@
 "use client";
 
+import { HelperMark } from "@/components/marks";
+import { PageIntro } from "@/components/page-intro";
+import { WeightCard } from "@/components/weight-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,7 +24,7 @@ export default function PeoplePage() {
   if (state.role !== "helper") {
     return (
       <div className="space-y-4">
-        <h1 className="text-4xl font-semibold">People</h1>
+        <h1 className="page-title">People</h1>
         <p className="text-lg text-muted-foreground">
           Only a helper can add a person.
         </p>
@@ -38,25 +41,25 @@ export default function PeoplePage() {
 
   return (
     <div className="flex flex-1 flex-col gap-8">
-      <header className="space-y-2">
-        <h1 className="text-4xl font-semibold tracking-tight">People</h1>
-        <p className="text-lg text-muted-foreground">
+      <PageIntro title="People" mark={<HelperMark />}>
+        <p>
           Who personal Today belongs to. First name and how to talk to them.
           Not a login.
         </p>
-      </header>
+      </PageIntro>
 
       <ul className="space-y-2">
         {state.people.map((person) => (
-          <li
+          <WeightCard
             key={person.id}
-            className="rounded-3xl border bg-card px-5 py-4 text-lg font-semibold"
+            as="li"
+            className="text-lg font-semibold"
           >
             {person.name}
             <span className="mt-1 block text-sm font-normal text-muted-foreground">
               {talkStyleLabels[person.talkStyle]}
             </span>
-          </li>
+          </WeightCard>
         ))}
       </ul>
 

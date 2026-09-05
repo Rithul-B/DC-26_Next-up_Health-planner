@@ -1,29 +1,43 @@
 "use client";
 
+import { HouseholdPresence } from "@/components/household";
+import { DoneMark, EmptyMark, TimeMark } from "@/components/marks";
 import { NextCard } from "@/components/next-card";
+import { PageIntro } from "@/components/page-intro";
 import { PersonSwitch } from "@/components/person-switch";
+import { WeightCard } from "@/components/weight-card";
 import { Button } from "@/components/ui/button";
-import { caughtUp, greeting, nextHeading } from "@/lib/copy";
+import { caughtUp, greeting, nextHeading, periodLine } from "@/lib/copy";
+import { clockPeriod } from "@/lib/period";
 import { useStore } from "@/lib/store";
 import Link from "next/link";
 
 export default function NowPage() {
   const { person, nextItem, screenWeight, state, todayItems } = useStore();
   const helper = state.role === "helper";
+  const period = clockPeriod();
+  const quiet = screenWeight === "critical";
+  const when = periodLine(period, screenWeight, person.talkStyle);
 
   return (
     <div className="flex flex-1 flex-col gap-8">
-      <header className="space-y-3">
-        <p className="text-lg text-muted-foreground">
-          {greeting(person, screenWeight)}
-        </p>
-        <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
-          {nextItem
+      <PageIntro
+        kicker={greeting(person, screenWeight)}
+        title={
+          nextItem
             ? nextHeading(screenWeight, person.talkStyle)
-            : caughtUp(person.talkStyle)}
-        </h1>
-        <p className="text-sm text-muted-foreground">On this device.</p>
-      </header>
+            : caughtUp(person.talkStyle)
+        }
+        mark={<TimeMark period={period} />}
+        quiet={quiet}
+      >
+        {when ? <p>{when}</p> : null}
+        <p className="mt-1 text-sm">On this device.</p>
+      </PageIntro>
+
+      <div className="lg:hidden">
+        <HouseholdPresence />
+      </div>
 
       {helper ? (
         <div className="space-y-2">
@@ -35,12 +49,16 @@ export default function NowPage() {
       {nextItem ? (
         <NextCard item={nextItem} />
       ) : (
-        <section className="rounded-3xl border bg-card px-6 py-10">
+        <WeightCard weight={screenWeight} period={period}>
+          <EmptyMark className="mb-4 h-16 w-16" />
           <p className="text-xl leading-relaxed">
             {todayItems.length === 0
               ? "No personal steps for this person yet."
               : "Today is done."}
           </p>
+          {todayItems.length > 0 ? (
+            <DoneMark className="mt-3 h-12 w-12 opacity-70" />
+          ) : null}
           <Button
             nativeButton={false}
             render={<Link href="/today" />}
@@ -49,7 +67,7 @@ export default function NowPage() {
           >
             See today
           </Button>
-        </section>
+        </WeightCard>
       )}
 
       {helper ? (

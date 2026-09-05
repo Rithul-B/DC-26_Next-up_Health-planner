@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { personTint } from "@/lib/period";
 import { useStore } from "@/lib/store";
 import { WHOLE_FAMILY } from "@/lib/types";
 
@@ -34,6 +35,7 @@ export function PersonSwitch({
           key={person.id}
           active={selected === person.id}
           label={person.name}
+          tint={personTint(person.id)}
           onClick={() => {
             if (onPick) onPick(person.id);
             else setActivePerson(person.id);
@@ -48,17 +50,20 @@ function Chip({
   active,
   label,
   onClick,
+  tint,
 }: {
   active: boolean;
   label: string;
   onClick: () => void;
+  tint?: ReturnType<typeof personTint>;
 }) {
   return (
     <Button
       type="button"
       variant={active ? "default" : "outline"}
       onClick={onClick}
-      className="h-12 rounded-full px-4 text-base"
+      data-tint={tint}
+      className="person-chip h-12 rounded-full px-4 text-base"
     >
       {label}
     </Button>

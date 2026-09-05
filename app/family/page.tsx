@@ -1,6 +1,10 @@
 "use client";
 
+import { HouseholdPresence } from "@/components/household";
+import { EmptyMark, FamilyKindMark, HouseMark } from "@/components/marks";
+import { PageIntro } from "@/components/page-intro";
 import { PersonSwitch } from "@/components/person-switch";
+import { WeightCard } from "@/components/weight-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -31,7 +35,8 @@ import { useRouter } from "next/navigation";
 type Filter = "soon" | "done" | "all";
 
 export default function FamilyPage() {
-  const { state, addFamily, markFamilyDone, promoteFamily } = useStore();
+  const { state, addFamily, markFamilyDone, promoteFamily, screenWeight } =
+    useStore();
   const [filter, setFilter] = useState<Filter>("all");
   const helper = state.role === "helper";
 
@@ -54,13 +59,21 @@ export default function FamilyPage() {
 
   return (
     <div className="flex flex-1 flex-col gap-8">
-      <header className="space-y-2">
-        <h1 className="text-4xl font-semibold tracking-tight">Family Center</h1>
-        <p className="text-lg text-muted-foreground">
+      <PageIntro
+        kicker="Shared board"
+        title="Family Center"
+        mark={<HouseMark />}
+        quiet={screenWeight === "critical"}
+      >
+        <p>
           Checkups for the whole household. No extra accounts. Everyday stuff
           stays here.
         </p>
-      </header>
+      </PageIntro>
+
+      <div className="lg:hidden">
+        <HouseholdPresence />
+      </div>
 
       {helper ? (
         <div className="space-y-2">
@@ -89,17 +102,23 @@ export default function FamilyPage() {
       </div>
 
       {rows.length === 0 ? (
-        <p className="rounded-3xl border bg-card px-6 py-8 text-lg">
-          Nothing in this view.
-        </p>
+        <WeightCard weight={screenWeight}>
+          <EmptyMark className="mb-3 h-14 w-14" />
+          <p className="text-lg">Nothing in this view.</p>
+        </WeightCard>
       ) : (
         <ul className="space-y-3">
           {rows.map((row) => (
-            <li key={row.id} className="rounded-3xl border bg-card px-5 py-5">
-              <p className="text-sm font-medium text-muted-foreground">
+            <WeightCard
+              key={row.id}
+              as="li"
+              weight={isDueSoon(row.due) ? "important" : "everyday"}
+            >
+              <p className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                <FamilyKindMark kind={row.kind} className="h-8 w-8" />
                 {familyKindLabels[row.kind]} · {whoName(row.who)}
               </p>
-              <p className="mt-1 text-xl font-semibold">{dueLabel(row.due)}</p>
+              <p className="mt-2 text-xl font-semibold">{dueLabel(row.due)}</p>
               <p className="mt-1 text-muted-foreground">
                 Last {formatShort(row.lastDone)}
                 {row.note ? ` · ${row.note}` : ""}
@@ -116,7 +135,7 @@ export default function FamilyPage() {
                   />
                 </div>
               ) : null}
-            </li>
+            </WeightCard>
           ))}
         </ul>
       )}

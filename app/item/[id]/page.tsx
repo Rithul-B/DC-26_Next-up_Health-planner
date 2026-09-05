@@ -15,7 +15,7 @@ export default function ItemPage() {
   if (!item) {
     return (
       <div className="space-y-4">
-        <h1 className="text-3xl font-semibold">That step is gone</h1>
+        <h1 className="page-title text-3xl">That step is gone</h1>
         <Button
           nativeButton={false}
           render={<Link href="/today" />}
@@ -30,7 +30,7 @@ export default function ItemPage() {
   if (isDone(item.id)) {
     return (
       <div className="space-y-4">
-        <h1 className="text-3xl font-semibold">Already done</h1>
+        <h1 className="page-title text-3xl">Already done</h1>
         <Button
           nativeButton={false}
           render={<Link href="/today" />}

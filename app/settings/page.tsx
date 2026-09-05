@@ -1,6 +1,9 @@
 "use client";
 
+import { EaseMark } from "@/components/marks";
+import { PageIntro } from "@/components/page-intro";
 import { PersonSwitch } from "@/components/person-switch";
+import { WeightCard } from "@/components/weight-card";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
@@ -13,14 +16,15 @@ export default function SettingsPage() {
 
   return (
     <div className="flex flex-1 flex-col gap-8">
-      <header className="space-y-2">
-        <h1 className="text-4xl font-semibold tracking-tight">Easier</h1>
-        <p className="text-lg text-muted-foreground">
-          These stay on this device. Make the app quieter or bigger.
-        </p>
-      </header>
+      <PageIntro
+        kicker="This device"
+        title="Easier"
+        mark={<EaseMark />}
+      >
+        <p>These stay on this device. Make the app quieter or bigger.</p>
+      </PageIntro>
 
-      <section className="space-y-5 rounded-3xl border bg-card px-5 py-6">
+      <WeightCard className="space-y-5">
         <h2 className="text-xl font-semibold">Who is using this</h2>
         <div className="flex flex-col gap-2" role="group" aria-label="Role">
           <Button
@@ -54,9 +58,9 @@ export default function SettingsPage() {
             </Button>
           </div>
         ) : null}
-      </section>
+      </WeightCard>
 
-      <section className="space-y-5 rounded-3xl border bg-card px-5 py-6">
+      <WeightCard className="space-y-5" weight="important">
         <h2 className="text-xl font-semibold">Make it easier</h2>
         <ToggleRow
           id="large"
@@ -76,9 +80,9 @@ export default function SettingsPage() {
           checked={state.ease.reduceMotion}
           onChange={(on) => setEase({ reduceMotion: on })}
         />
-      </section>
+      </WeightCard>
 
-      <section className="rounded-3xl border bg-card px-5 py-6">
+      <WeightCard weight="important">
         <h2 className="text-xl font-semibold">This is a demo</h2>
         <p className="mt-2 text-muted-foreground">
           Next Up is not medical advice and not a medical device. It is not
@@ -94,7 +98,7 @@ export default function SettingsPage() {
         >
           Reset demo data
         </Button>
-      </section>
+      </WeightCard>
     </div>
   );
 }

@@ -1,12 +1,16 @@
 "use client";
 
+import { Atmosphere } from "@/components/atmosphere";
 import { BottomNav } from "@/components/bottom-nav";
+import { HouseholdPresence } from "@/components/household";
+import { clockPeriod } from "@/lib/period";
 import { useStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
-import { useEffect } from "react";
+import { useEffect, type ReactNode } from "react";
 
-export function AppShell({ children }: { children: React.ReactNode }) {
+export function AppShell({ children }: { children: ReactNode }) {
   const { ready, screenWeight, state } = useStore();
+  const period = clockPeriod();
 
   useEffect(() => {
     const root = document.documentElement;
@@ -14,8 +18,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     root.classList.toggle("high-contrast", state.ease.highContrast);
     root.classList.toggle("reduce-motion", state.ease.reduceMotion);
     root.dataset.weight = screenWeight;
+    root.dataset.period = period;
     root.classList.toggle("dark", screenWeight === "critical");
-  }, [state.ease, screenWeight]);
+  }, [state.ease, screenWeight, period]);
 
   if (!ready) {
     return (
@@ -28,24 +33,30 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div
       className={cn(
-        "flex min-h-dvh flex-col transition-colors duration-500",
+        "app-frame flex min-h-dvh flex-col transition-colors duration-500",
         screenWeight === "critical" && "weight-critical",
         screenWeight === "important" && "weight-important",
         screenWeight === "everyday" && "weight-everyday",
       )}
     >
+      <Atmosphere weight={screenWeight} period={period} />
       <a
         href="#main"
         className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-background focus:px-3 focus:py-2"
       >
         Skip to content
       </a>
-      <main
-        id="main"
-        className="mx-auto flex w-full max-w-xl flex-1 flex-col px-5 pb-28 pt-8 sm:px-6"
-      >
-        {children}
-      </main>
+        <div className="desktop-shell flex flex-1 flex-col lg:pt-10">
+        <div className="desktop-rail">
+          <HouseholdPresence layout="stack" />
+        </div>
+        <main
+          id="main"
+          className="desktop-main mx-auto flex w-full max-w-xl flex-1 flex-col px-5 pb-28 pt-8 sm:px-6 lg:max-w-none lg:px-0 lg:pt-0"
+        >
+          {children}
+        </main>
+      </div>
       <BottomNav />
     </div>
   );

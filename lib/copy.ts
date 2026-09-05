@@ -36,6 +36,47 @@ export function greeting(person: Person, weight: Weight): string {
   return `Hi ${person.name}.`;
 }
 
+export function periodLine(
+  period: TimeOfDay,
+  weight: Weight,
+  style: TalkStyle,
+): string {
+  if (weight === "critical") return "";
+  if (weight === "important") {
+    if (period === "morning") return "Start with this.";
+    if (period === "afternoon") return "Still on the list.";
+    if (period === "evening") return "Before the day closes.";
+    return "This is still waiting.";
+  }
+  if (style === "few-words") {
+    if (period === "morning") return "Morning.";
+    if (period === "afternoon") return "Afternoon.";
+    if (period === "evening") return "Evening.";
+    return "Night.";
+  }
+  if (style === "encouraging") {
+    if (period === "morning") return "Easy start. One small thing.";
+    if (period === "afternoon") return "The day is open. This is next.";
+    if (period === "evening") return "Almost through. Then you can stop.";
+    return "Keep this short. Then rest.";
+  }
+  if (period === "morning") return "The kettle part of the day.";
+  if (period === "afternoon") return "Daylight still. This is next.";
+  if (period === "evening") return "Lamps on. Then you’re free.";
+  return "Quiet hours. One last step.";
+}
+
+export function householdLine(
+  name: string,
+  waiting: number,
+  weight: Weight,
+): string {
+  if (weight === "critical") return name;
+  if (waiting === 0) return `${name} is clear`;
+  if (waiting === 1) return `${name} has one`;
+  return `${name} has ${waiting}`;
+}
+
 export function nextHeading(weight: Weight, style: TalkStyle): string {
   if (weight === "critical") return "This one matters";
   if (weight === "important") return "Next up";

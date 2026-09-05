@@ -1,25 +1,28 @@
 "use client";
 
+import { EaseMark, HouseMark, TimeMark } from "@/components/marks";
+import { clockPeriod } from "@/lib/period";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const links = [
-  { href: "/", label: "Now" },
-  { href: "/today", label: "Today" },
-  { href: "/family", label: "Family" },
-  { href: "/settings", label: "Easier" },
+  { href: "/", label: "Now", mark: "now" as const },
+  { href: "/today", label: "Today", mark: "today" as const },
+  { href: "/family", label: "Family", mark: "family" as const },
+  { href: "/settings", label: "Easier", mark: "easier" as const },
 ];
 
 export function BottomNav() {
   const pathname = usePathname();
+  const period = clockPeriod();
 
   return (
     <nav
       aria-label="Main"
-      className="fixed inset-x-0 bottom-0 z-40 border-t bg-background/95 backdrop-blur-sm"
+      className="bottom-nav fixed inset-x-0 bottom-0 z-40 border-t backdrop-blur-sm"
     >
-      <ul className="mx-auto grid max-w-xl grid-cols-4 px-2 py-2">
+      <ul className="mx-auto grid max-w-xl grid-cols-4 px-2 py-2 lg:max-w-5xl">
         {links.map((link) => {
           const active =
             link.href === "/"
@@ -31,12 +34,21 @@ export function BottomNav() {
                 href={link.href}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "flex min-h-14 items-center justify-center rounded-xl text-base font-semibold",
+                  "flex min-h-16 flex-col items-center justify-center gap-0.5 rounded-xl px-1 text-sm font-semibold sm:text-base",
                   active
                     ? "bg-primary text-primary-foreground"
                     : "text-foreground/80 hover:bg-muted",
                 )}
               >
+                <span className="h-5 w-5">
+                  {link.mark === "now" || link.mark === "today" ? (
+                    <TimeMark period={period} className="h-5 w-5" />
+                  ) : link.mark === "family" ? (
+                    <HouseMark className="h-5 w-5" />
+                  ) : (
+                    <EaseMark className="h-5 w-5" />
+                  )}
+                </span>
                 {link.label}
               </Link>
             </li>

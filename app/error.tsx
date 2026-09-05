@@ -10,7 +10,7 @@ export default function ErrorPage({
 }) {
   return (
     <div className="space-y-4">
-      <h1 className="text-4xl font-semibold tracking-tight">Something broke</h1>
+      <h1 className="page-title">Something broke</h1>
       <p className="text-lg text-muted-foreground">
         Try again. Your data is still on this device.
       </p>

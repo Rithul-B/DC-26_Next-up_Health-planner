@@ -1,6 +1,9 @@
 "use client";
 
+import { EmptyMark, HelperMark, WeightPip } from "@/components/marks";
+import { PageIntro } from "@/components/page-intro";
 import { PersonSwitch } from "@/components/person-switch";
+import { WeightCard } from "@/components/weight-card";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -41,10 +44,11 @@ export default function HelperPage() {
   if (state.role !== "helper") {
     return (
       <div className="space-y-4">
-        <h1 className="text-4xl font-semibold tracking-tight">Helper</h1>
-        <p className="text-lg text-muted-foreground">
-          Turn on “I’m helping” in Easier to add or change personal steps.
-        </p>
+        <PageIntro title="Helper" mark={<HelperMark />}>
+          <p>
+            Turn on “I’m helping” in Easier to add or change personal steps.
+          </p>
+        </PageIntro>
         <Button
           nativeButton={false}
           render={<Link href="/settings" />}
@@ -58,16 +62,19 @@ export default function HelperPage() {
 
   return (
     <div className="flex flex-1 flex-col gap-8">
-      <header className="space-y-2">
-        <h1 className="text-4xl font-semibold tracking-tight">Helper</h1>
-        <p className="text-lg text-muted-foreground">
+      <PageIntro
+        kicker="Looking after"
+        title="Helper"
+        mark={<HelperMark />}
+      >
+        <p>
           Personal steps for {person.name}. Checkups stay in Family Center.
         </p>
-      </header>
+      </PageIntro>
 
       <PersonSwitch />
 
-      <section className="rounded-3xl border bg-card px-5 py-5">
+      <WeightCard>
         <p className="text-sm font-medium text-muted-foreground">
           Today’s check-in
         </p>
@@ -80,7 +87,7 @@ export default function HelperPage() {
                 : "Today feels hard."
             : "Not filled in yet."}
         </p>
-      </section>
+      </WeightCard>
 
       <AddItemForm
         personId={person.id}
@@ -89,13 +96,20 @@ export default function HelperPage() {
 
       <ul className="space-y-3">
         {todayItems.length === 0 ? (
-          <li className="rounded-3xl border bg-card px-6 py-8 text-lg">
-            No personal steps yet.
-          </li>
+          <WeightCard as="li">
+            <EmptyMark className="mb-3 h-14 w-14" />
+            <p className="text-lg">No personal steps yet.</p>
+          </WeightCard>
         ) : (
           todayItems.map((item) => (
-            <li key={item.id} className="rounded-3xl border bg-card px-5 py-5">
-              <p className="text-sm text-muted-foreground">
+            <WeightCard
+              key={item.id}
+              as="li"
+              weight={item.weight}
+              period={item.timeOfDay}
+            >
+              <p className="flex items-center gap-2 text-sm text-muted-foreground">
+                <WeightPip weight={item.weight} />
                 {timeLabels[item.timeOfDay]} · {weightLabels[item.weight]}
               </p>
               <p className="mt-1 text-xl font-semibold">{item.title}</p>
@@ -117,7 +131,7 @@ export default function HelperPage() {
                   Remove
                 </Button>
               </div>
-            </li>
+            </WeightCard>
           ))
         )}
       </ul>

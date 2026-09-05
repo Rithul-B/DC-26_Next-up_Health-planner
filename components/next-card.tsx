@@ -1,5 +1,7 @@
 "use client";
 
+import { DoneMark, TimeMark, WeightPip } from "@/components/marks";
+import { WeightCard } from "@/components/weight-card";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -45,22 +47,30 @@ export function NextCard({
 
   if (justDone) {
     return (
-      <section
-        className="rounded-3xl border bg-card px-6 py-10 text-center shadow-sm"
-        aria-live="polite"
+      <WeightCard
+        weight={item.weight}
+        period={item.timeOfDay}
+        className="px-6 py-10 text-center"
       >
-        <p className="text-2xl font-semibold">{doneLine(item.weight, person.talkStyle)}</p>
-      </section>
+        <DoneMark className="mx-auto mb-4 h-16 w-16" />
+        <p className="text-2xl font-semibold" aria-live="polite">
+          {doneLine(item.weight, person.talkStyle)}
+        </p>
+      </WeightCard>
     );
   }
 
   return (
-    <section className="rounded-3xl border bg-card px-6 py-8 shadow-sm">
-      <p className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
-        {timeLabels[item.timeOfDay]}
-        {item.place ? ` · ${item.place}` : ""}
-      </p>
-      <h2 className="mt-3 text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
+    <WeightCard weight={item.weight} period={item.timeOfDay} className="px-6 py-8">
+      <div className="flex items-center gap-3 text-sm font-medium uppercase tracking-wide text-muted-foreground">
+        <TimeMark period={item.timeOfDay} className="h-8 w-8" />
+        <span>
+          {timeLabels[item.timeOfDay]}
+          {item.place ? ` · ${item.place}` : ""}
+        </span>
+        <WeightPip weight={item.weight} className="ml-auto" />
+      </div>
+      <h2 className="page-title mt-4 text-[2rem] sm:text-[2.35rem]">
         {item.title}
       </h2>
       <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
@@ -112,6 +122,6 @@ export function NextCard({
           </Button>
         ) : null}
       </div>
-    </section>
+    </WeightCard>
   );
 }
