@@ -14,6 +14,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { WhisperEditor, WhisperLine } from "@/components/helper-whisper";
 import { doneLine, timeLabels, whyLine } from "@/lib/copy";
 import { dueLabel } from "@/lib/dates";
 import { useStore } from "@/lib/store";
@@ -77,6 +78,7 @@ export function NextCard({
       <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
         {whyLine(item, person.talkStyle)}
       </p>
+      <WhisperLine item={item} className="mt-3 text-lg" />
       {item.due ? (
         <p className="mt-2 text-base font-medium">{dueLabel(item.due)}</p>
       ) : null}
@@ -125,6 +127,7 @@ export function NextCard({
               : "Later today"}
           </Button>
         ) : null}
+        {helper ? <WhisperEditor item={item} /> : null}
       </div>
     </WeightCard>
   );

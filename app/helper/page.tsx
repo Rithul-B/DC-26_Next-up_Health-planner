@@ -23,6 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { WhisperEditor, WhisperLine } from "@/components/helper-whisper";
 import { timeLabels, weightLabels } from "@/lib/copy";
 import { useStore } from "@/lib/store";
 import type { ItemKind, PersonalItem, TimeOfDay, Weight } from "@/lib/types";
@@ -113,7 +114,9 @@ export default function HelperPage() {
                 {timeLabels[item.timeOfDay]} · {weightLabels[item.weight]}
               </p>
               <p className="mt-1 text-xl font-semibold">{item.title}</p>
+              <WhisperLine item={item} className="mt-1" />
               <div className="mt-2 flex flex-wrap gap-2">
+                <WhisperEditor item={item} compact />
                 <EditItemForm item={item} onSave={updateItem} />
                 <Button
                   variant="ghost"
@@ -257,10 +260,12 @@ function AddItemForm({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="note">Plain note</Label>
+            <Label htmlFor="note">Short note they can see</Label>
             <Input
               id="note"
               value={note}
+              maxLength={80}
+              placeholder="Already by the kettle"
               onChange={(e) => setNote(e.target.value)}
             />
           </div>
@@ -418,10 +423,12 @@ function EditItemForm({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor={`edit-note-${item.id}`}>Plain note</Label>
+            <Label htmlFor={`edit-note-${item.id}`}>Short note they can see</Label>
             <Input
               id={`edit-note-${item.id}`}
               value={note}
+              maxLength={80}
+              placeholder="Already by the kettle"
               onChange={(e) => setNote(e.target.value)}
             />
           </div>

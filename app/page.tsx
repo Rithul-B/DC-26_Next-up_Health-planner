@@ -1,24 +1,26 @@
 "use client";
 
 import { HouseholdPresence } from "@/components/household";
-import { DoneMark, EmptyMark, TimeMark } from "@/components/marks";
+import { TimeMark } from "@/components/marks";
 import { NextCard } from "@/components/next-card";
 import { PageIntro } from "@/components/page-intro";
 import { PersonSwitch } from "@/components/person-switch";
 import { SyncNote } from "@/components/sync-note";
-import { WeightCard } from "@/components/weight-card";
+import { TonightClose } from "@/components/tonight-close";
 import { Button } from "@/components/ui/button";
-import { caughtUp, greeting, nextHeading, periodLine } from "@/lib/copy";
+import { greeting, nextHeading, periodLine, tonightHeading } from "@/lib/copy";
 import { clockPeriod } from "@/lib/period";
 import { useStore } from "@/lib/store";
 import Link from "next/link";
 
 export default function NowPage() {
-  const { person, nextItem, screenWeight, state, todayItems } = useStore();
+  const { person, nextItem, screenWeight, state } = useStore();
   const helper = state.role === "helper";
   const period = clockPeriod();
   const quiet = screenWeight === "critical";
-  const when = periodLine(period, screenWeight, person.talkStyle);
+  const when = nextItem
+    ? periodLine(period, screenWeight, person.talkStyle)
+    : "";
 
   return (
     <div className="flex flex-1 flex-col gap-8">
@@ -27,7 +29,7 @@ export default function NowPage() {
         title={
           nextItem
             ? nextHeading(screenWeight, person.talkStyle)
-            : caughtUp(person.talkStyle)
+            : tonightHeading(person.talkStyle, period)
         }
         mark={<TimeMark period={period} />}
         quiet={quiet}
@@ -47,29 +49,7 @@ export default function NowPage() {
         </div>
       ) : null}
 
-      {nextItem ? (
-        <NextCard item={nextItem} />
-      ) : (
-        <WeightCard weight={screenWeight} period={period}>
-          <EmptyMark className="mb-4 h-16 w-16" />
-          <p className="text-xl leading-relaxed">
-            {todayItems.length === 0
-              ? "No personal steps for this person yet."
-              : "Today is done."}
-          </p>
-          {todayItems.length > 0 ? (
-            <DoneMark className="mt-3 h-12 w-12 opacity-70" />
-          ) : null}
-          <Button
-            nativeButton={false}
-            render={<Link href="/today" />}
-            variant="outline"
-            className="mt-6 h-12 rounded-2xl px-5 text-base"
-          >
-            See today
-          </Button>
-        </WeightCard>
-      )}
+      {nextItem ? <NextCard item={nextItem} /> : <TonightClose />}
 
       {helper ? (
         <Button

@@ -442,9 +442,12 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     updateItem: (itemId, next) =>
       patch((s) => ({
         ...s,
-        items: s.items.map((row) =>
-          row.id === itemId ? { ...row, ...next } : row,
-        ),
+        items: s.items.map((row) => {
+          if (row.id !== itemId) return row;
+          const merged = { ...row, ...next };
+          if ("note" in next && !next.note) delete merged.note;
+          return merged;
+        }),
       })),
     removeItem: (itemId) =>
       patch((s) => ({ ...s, items: s.items.filter((i) => i.id !== itemId) })),

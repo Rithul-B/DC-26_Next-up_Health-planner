@@ -87,7 +87,6 @@ export function nextHeading(weight: Weight, style: TalkStyle): string {
 }
 
 export function whyLine(item: PersonalItem, style: TalkStyle): string {
-  if (item.note) return item.note;
   if (item.weight === "critical") return "Do this now. Then you can rest.";
   if (item.kind === "appointment") {
     return item.place ? `At ${item.place}.` : "This visit is today.";
@@ -95,6 +94,71 @@ export function whyLine(item: PersonalItem, style: TalkStyle): string {
   if (style === "encouraging") return "Small step. Then you’re done.";
   if (style === "few-words") return "Take it. Then tick it.";
   return "When this is done, you’re free for a bit.";
+}
+
+export function helperWhisper(item: PersonalItem): string | undefined {
+  const text = item.note?.trim();
+  return text ? text : undefined;
+}
+
+function joinTitles(items: PersonalItem[]): string {
+  const titles = items.map((item) => item.title);
+  if (titles.length === 0) return "";
+  if (titles.length === 1) return titles[0];
+  if (titles.length === 2) return `${titles[0]} and ${titles[1]}`;
+  return `${titles.length} things`;
+}
+
+function actorName(person: Person): string {
+  return person.name === "You" ? "You" : person.name;
+}
+
+export function tonightHeading(style: TalkStyle, period: TimeOfDay): string {
+  const nightish = period === "evening" || period === "night";
+  if (style === "few-words") return nightish ? "Enough for tonight" : "Enough for today";
+  if (nightish) return "That’s enough for tonight";
+  return "That’s enough for today";
+}
+
+export function tonightDoneLine(
+  done: PersonalItem[],
+  person: Person,
+  style: TalkStyle,
+): string {
+  if (done.length === 0) return "";
+  const who = actorName(person);
+  const what = joinTitles(done);
+  if (style === "few-words") {
+    return done.length <= 2 ? what : `${done.length} done.`;
+  }
+  if (who === "You") {
+    if (style === "encouraging") {
+      return done.length <= 2 ? `You did ${what}. That counts.` : `You did ${what} today. That counts.`;
+    }
+    return done.length <= 2 ? `You did ${what}.` : `You did ${what} today.`;
+  }
+  if (style === "encouraging") {
+    return done.length <= 2
+      ? `${who} did ${what}. That counts.`
+      : `${who} did ${what} today. That counts.`;
+  }
+  return done.length <= 2 ? `${who} did ${what}.` : `${who} did ${what} today.`;
+}
+
+export function tonightMorningLine(
+  waiting: PersonalItem[],
+  style: TalkStyle,
+): string {
+  if (waiting.length === 0) {
+    if (style === "few-words") return "Nothing for morning.";
+    return "Nothing waiting for morning.";
+  }
+  const what = joinTitles(waiting);
+  if (style === "few-words") return `${what} in the morning.`;
+  if (style === "encouraging") {
+    return `${what} can wait until morning. You’re free now.`;
+  }
+  return `${what} can wait until morning.`;
 }
 
 export function doneLine(weight: Weight, style: TalkStyle): string {

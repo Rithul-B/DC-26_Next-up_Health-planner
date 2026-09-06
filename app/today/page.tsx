@@ -6,6 +6,7 @@ import { PageIntro } from "@/components/page-intro";
 import { PersonSwitch } from "@/components/person-switch";
 import { WeightCard } from "@/components/weight-card";
 import { Button } from "@/components/ui/button";
+import { WhisperLine } from "@/components/helper-whisper";
 import { timeLabels, weightLabels } from "@/lib/copy";
 import { clockPeriod } from "@/lib/period";
 import { useStore } from "@/lib/store";
@@ -92,6 +93,7 @@ export default function TodayPage() {
                               {done ? " · Done" : ""}
                             </p>
                             <p className="mt-1 text-xl font-semibold">{item.title}</p>
+                            <WhisperLine item={item} className="mt-1" />
                           </Link>
                         </WeightCard>
                         {done ? (
