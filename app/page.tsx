@@ -5,6 +5,7 @@ import { DoneMark, EmptyMark, TimeMark } from "@/components/marks";
 import { NextCard } from "@/components/next-card";
 import { PageIntro } from "@/components/page-intro";
 import { PersonSwitch } from "@/components/person-switch";
+import { SyncNote } from "@/components/sync-note";
 import { WeightCard } from "@/components/weight-card";
 import { Button } from "@/components/ui/button";
 import { caughtUp, greeting, nextHeading, periodLine } from "@/lib/copy";
@@ -32,7 +33,7 @@ export default function NowPage() {
         quiet={quiet}
       >
         {when ? <p>{when}</p> : null}
-        <p className="mt-1 text-sm">On this device.</p>
+        <SyncNote className="mt-1 text-sm" />
       </PageIntro>
 
       <div className="lg:hidden">

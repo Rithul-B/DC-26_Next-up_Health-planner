@@ -1,0 +1,114 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Household {
+  id           String         @id @default(cuid())
+  name         String
+  joinCode     String         @unique
+  passwordHash String?
+  createdAt    DateTime       @default(now())
+  members      Member[]
+  people       Person[]
+  items        PersonalItem[]
+  completions  Completion[]
+  postponed    Postpone[]
+  checkIns     CheckIn[]
+  family       FamilyRecord[]
+  sessions     Session[]
+}
+
+model Member {
+  id          String     @id @default(cuid())
+  householdId String
+  household   Household  @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  name        String
+  role        String     @default("person")
+  personId    String?
+  createdAt   DateTime   @default(now())
+  sessions    Session[]
+}
+
+model Session {
+  id          String    @id
+  householdId String
+  household   Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  memberId    String
+  member      Member    @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  personId    String
+  role        String
+  expiresAt   DateTime
+  createdAt   DateTime  @default(now())
+}
+
+model Person {
+  id          String    @id
+  householdId String
+  household   Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  name        String
+  talkStyle   String
+  sortOrder   Int       @default(0)
+}
+
+model PersonalItem {
+  id          String    @id
+  householdId String
+  household   Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  personId    String
+  kind        String
+  title       String
+  timeOfDay   String
+  weight      String
+  note        String?
+  place       String?
+  due         String?
+}
+
+model Completion {
+  id          String    @id @default(cuid())
+  householdId String
+  household   Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  personId    String
+  day         String
+  itemId      String
+
+  @@unique([householdId, personId, day, itemId])
+}
+
+model Postpone {
+  id          String    @id @default(cuid())
+  householdId String
+  household   Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  personId    String
+  day         String
+  itemId      String
+
+  @@unique([householdId, personId, day, itemId])
+}
+
+model CheckIn {
+  id          String    @id @default(cuid())
+  householdId String
+  household   Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  personId    String
+  day         String
+  feeling     String
+
+  @@unique([householdId, personId, day])
+}
+
+model FamilyRecord {
+  id          String    @id
+  householdId String
+  household   Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  kind        String
+  who         String
+  lastDone    String
+  due         String
+  note        String?
+}

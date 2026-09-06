@@ -3,12 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --port 43127",
-    "build": "next build",
+    "dev": "node prisma/prepare.mjs && prisma generate && prisma db push && node prisma/seed.mjs && next dev --port 43127",
+    "build": "node prisma/prepare.mjs && prisma generate && prisma db push && next build",
     "start": "next start --port 43127",
-    "lint": "eslint"
+    "lint": "eslint",
+    "postinstall": "node prisma/prepare.mjs && prisma generate",
+    "db:push": "node prisma/prepare.mjs && prisma db push",
+    "db:seed": "node prisma/seed.mjs"
   },
   "dependencies": {
+    "@prisma/client": "^6.16.2",
     "@base-ui/react": "^1.8.0",
     "class-variance-authority": "^0.7.1",
     "cn": "^0.2.5",
@@ -26,6 +30,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.3.4",
+    "prisma": "^6.16.2",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

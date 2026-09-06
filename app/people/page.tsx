@@ -43,8 +43,8 @@ export default function PeoplePage() {
     <div className="flex flex-1 flex-col gap-8">
       <PageIntro title="People" mark={<HelperMark />}>
         <p>
-          Who personal Today belongs to. First name and how to talk to them.
-          Not a login.
+          Who personal Today belongs to. Any names you want. First name and how
+          to talk to them.
         </p>
       </PageIntro>
 

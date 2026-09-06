@@ -34,10 +34,10 @@ export function householdRows(state: AppState, day = todayKey()): HouseholdRow[]
 }
 
 export function personTint(id: string): "you" | "dad" | "sam" | "other" {
-  if (id === "you") return "you";
-  if (id === "dad") return "dad";
-  if (id === "sam") return "sam";
-  return "other";
+  if (id === "you" || id === "dad" || id === "sam") return id;
+  let n = 0;
+  for (const char of id) n += char.charCodeAt(0);
+  return (["you", "dad", "sam", "other"] as const)[n % 4];
 }
 
 export function weightTone(weight: Weight): "warm" | "clean" | "quiet" {

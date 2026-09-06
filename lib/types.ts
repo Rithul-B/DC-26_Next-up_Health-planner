@@ -5,6 +5,7 @@ export type TalkStyle = "plain" | "few-words" | "encouraging";
 export type ItemKind = "med" | "appointment";
 export type FamilyKind = "checkup" | "dentist" | "eyes" | "vaccine" | "other";
 export type CheckInFeeling = "good" | "ok" | "hard";
+export type SyncMode = "local" | "household";
 
 export type Person = {
   id: string;
@@ -21,6 +22,7 @@ export type PersonalItem = {
   weight: Weight;
   note?: string;
   place?: string;
+  due?: string;
 };
 
 export type FamilyRecord = {
@@ -36,18 +38,33 @@ export type EaseSettings = {
   largeText: boolean;
   highContrast: boolean;
   reduceMotion: boolean;
+  reminders: boolean;
 };
 
-export type AppState = {
+export type HouseholdInfo = {
+  id: string;
+  name: string;
+  joinCode: string;
+  hasPassword: boolean;
+};
+
+export type HouseholdSnapshot = {
   people: Person[];
-  activePersonId: string;
-  role: Role;
-  ease: EaseSettings;
   items: PersonalItem[];
   completions: Record<string, string[]>;
   postponed: Record<string, string[]>;
   checkIns: Record<string, CheckInFeeling>;
   family: FamilyRecord[];
+};
+
+export type AppState = HouseholdSnapshot & {
+  activePersonId: string;
+  role: Role;
+  ease: EaseSettings;
+  sync: SyncMode;
+  dbAvailable: boolean;
+  household: HouseholdInfo | null;
+  memberName: string | null;
 };
 
 export const WHOLE_FAMILY = "wholeFamily";
@@ -60,3 +77,11 @@ export const TIME_ORDER: TimeOfDay[] = [
 ];
 
 export const WEIGHT_ORDER: Weight[] = ["critical", "important", "everyday"];
+
+export const FALLBACK_PERSON: Person = {
+  id: "you",
+  name: "You",
+  talkStyle: "plain",
+};
+
+export const DEMO_JOIN_CODE = "NEXTUP";

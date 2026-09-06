@@ -15,7 +15,12 @@ export const seedState: AppState = {
     largeText: false,
     highContrast: false,
     reduceMotion: false,
+    reminders: false,
   },
+  sync: "local",
+  dbAvailable: false,
+  household: null,
+  memberName: null,
   items: [
     {
       id: "you-vitamin",

@@ -2,15 +2,21 @@
 
 import { Atmosphere } from "@/components/atmosphere";
 import { BottomNav } from "@/components/bottom-nav";
+import { DueBanner } from "@/components/due-banner";
 import { HouseholdPresence } from "@/components/household";
+import { WelcomeScreen } from "@/components/welcome";
 import { clockPeriod } from "@/lib/period";
 import { useStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
+import { usePathname } from "next/navigation";
 import { useEffect, type ReactNode } from "react";
 
 export function AppShell({ children }: { children: ReactNode }) {
-  const { ready, screenWeight, state } = useStore();
+  const { ready, screenWeight, state, phase } = useStore();
   const period = clockPeriod();
+  const pathname = usePathname();
+  const onJoin = pathname.startsWith("/join");
+  const showWelcome = ready && phase === "welcome" && !onJoin;
 
   useEffect(() => {
     const root = document.documentElement;
@@ -46,18 +52,27 @@ export function AppShell({ children }: { children: ReactNode }) {
       >
         Skip to content
       </a>
-        <div className="desktop-shell flex flex-1 flex-col lg:pt-10">
-        <div className="desktop-rail">
-          <HouseholdPresence layout="stack" />
-        </div>
+      <div className="desktop-shell flex flex-1 flex-col lg:pt-10">
+        {!showWelcome && !onJoin ? (
+          <div className="desktop-rail">
+            <HouseholdPresence layout="stack" />
+          </div>
+        ) : null}
         <main
           id="main"
           className="desktop-main mx-auto flex w-full max-w-xl flex-1 flex-col px-5 pb-28 pt-8 sm:px-6 lg:max-w-none lg:px-0 lg:pt-0"
         >
-          {children}
+          {showWelcome ? (
+            <WelcomeScreen />
+          ) : (
+            <>
+              {!onJoin ? <DueBanner /> : null}
+              {children}
+            </>
+          )}
         </main>
       </div>
-      <BottomNav />
+      {!showWelcome ? <BottomNav /> : null}
     </div>
   );
 }

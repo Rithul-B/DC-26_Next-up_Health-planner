@@ -22,7 +22,16 @@ export function HouseholdPresence({
       )}
       aria-label="Household"
     >
-      <p className="household-kicker">{quiet ? "Household" : "In this house"}</p>
+      <p className="household-kicker">
+        {quiet
+          ? "Household"
+          : state.household?.name
+            ? state.household.name
+            : "In this house"}
+      </p>
+      {rows.length === 0 ? (
+        <p className="text-sm text-muted-foreground">No people yet.</p>
+      ) : null}
       <ul className={cn("household-list", layout === "stack" && "household-list-stack")}>
         {rows.map((row) => (
           <li

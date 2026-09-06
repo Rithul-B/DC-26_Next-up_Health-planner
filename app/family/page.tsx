@@ -1,6 +1,7 @@
 "use client";
 
 import { HouseholdPresence } from "@/components/household";
+import { ShareHouse } from "@/components/share-house";
 import { EmptyMark, FamilyKindMark, HouseMark } from "@/components/marks";
 import { PageIntro } from "@/components/page-intro";
 import { PersonSwitch } from "@/components/person-switch";
@@ -66,8 +67,8 @@ export default function FamilyPage() {
         quiet={screenWeight === "critical"}
       >
         <p>
-          Checkups for the whole household. No extra accounts. Everyday stuff
-          stays here.
+          Checkups for the whole household. Everyday stuff stays here. Personal
+          steps stay on Now and Today.
         </p>
       </PageIntro>
 
@@ -145,6 +146,8 @@ export default function FamilyPage() {
           Switch to “I’m helping” in Easier to add a checkup.
         </p>
       )}
+
+      <ShareHouse />
     </div>
   );
 }
@@ -299,7 +302,7 @@ function AddFamilyForm({
         <DialogHeader>
           <DialogTitle>Add to Family Center</DialogTitle>
           <DialogDescription>
-            Tag a name or everyone. This does not create an account.
+            Tag a name or everyone. Shared with anyone who has the house link.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">

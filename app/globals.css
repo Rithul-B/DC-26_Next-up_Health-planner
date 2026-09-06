@@ -602,3 +602,12 @@ html[data-weight="critical"] .feeling-hard {
 .person-chip[data-tint="other"] {
   --chip: var(--other);
 }
+
+.due-banner {
+  background: color-mix(in oklch, var(--card) 88%, var(--accent));
+  border-color: color-mix(in oklch, var(--border) 70%, var(--primary));
+}
+
+html[data-weight="critical"] .due-banner {
+  background: oklch(0.2 0.02 260);
+}

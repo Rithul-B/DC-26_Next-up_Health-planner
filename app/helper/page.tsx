@@ -161,6 +161,7 @@ function AddItemForm({
     weight: Weight;
     note?: string;
     place?: string;
+    due?: string;
   }) => string;
 }) {
   const [open, setOpen] = useState(false);
@@ -170,6 +171,7 @@ function AddItemForm({
   const [weight, setWeight] = useState<Weight>("everyday");
   const [note, setNote] = useState("");
   const [place, setPlace] = useState("");
+  const [due, setDue] = useState("");
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -262,6 +264,15 @@ function AddItemForm({
               onChange={(e) => setNote(e.target.value)}
             />
           </div>
+          <div className="space-y-2">
+            <Label htmlFor="due">Remind on this day (optional)</Label>
+            <Input
+              id="due"
+              type="date"
+              value={due}
+              onChange={(e) => setDue(e.target.value)}
+            />
+          </div>
         </div>
         <DialogFooter>
           <Button
@@ -276,10 +287,12 @@ function AddItemForm({
                 weight,
                 note: note || undefined,
                 place: place || undefined,
+                due: due || undefined,
               });
               setTitle("");
               setNote("");
               setPlace("");
+              setDue("");
               setOpen(false);
             }}
           >
@@ -305,6 +318,7 @@ function EditItemForm({
   const [weight, setWeight] = useState<Weight>(item.weight);
   const [note, setNote] = useState(item.note ?? "");
   const [place, setPlace] = useState(item.place ?? "");
+  const [due, setDue] = useState(item.due ?? "");
 
   return (
     <Dialog
@@ -318,6 +332,7 @@ function EditItemForm({
           setWeight(item.weight);
           setNote(item.note ?? "");
           setPlace(item.place ?? "");
+          setDue(item.due ?? "");
         }
       }}
     >
@@ -410,6 +425,15 @@ function EditItemForm({
               onChange={(e) => setNote(e.target.value)}
             />
           </div>
+          <div className="space-y-2">
+            <Label htmlFor={`edit-due-${item.id}`}>Remind on this day</Label>
+            <Input
+              id={`edit-due-${item.id}`}
+              type="date"
+              value={due}
+              onChange={(e) => setDue(e.target.value)}
+            />
+          </div>
         </div>
         <DialogFooter>
           <Button
@@ -423,6 +447,7 @@ function EditItemForm({
                 weight,
                 note: note || undefined,
                 place: place || undefined,
+                due: due || undefined,
               });
               setOpen(false);
             }}

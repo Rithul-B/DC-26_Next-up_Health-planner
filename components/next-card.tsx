@@ -15,6 +15,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { doneLine, timeLabels, whyLine } from "@/lib/copy";
+import { dueLabel } from "@/lib/dates";
 import { useStore } from "@/lib/store";
 import type { PersonalItem } from "@/lib/types";
 import { useState } from "react";
@@ -76,6 +77,9 @@ export function NextCard({
       <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
         {whyLine(item, person.talkStyle)}
       </p>
+      {item.due ? (
+        <p className="mt-2 text-base font-medium">{dueLabel(item.due)}</p>
+      ) : null}
 
       <div className="mt-8 flex flex-col gap-3">
         {item.weight === "critical" ? (
