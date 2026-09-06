@@ -37,7 +37,8 @@ export async function writeSessionCookie(token: string, expiresAt: Date) {
   const jar = await cookies();
   jar.set(SESSION_COOKIE, token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    // Vercel is HTTPS. Local `npm start` is HTTP — a Secure cookie would be dropped.
+    secure: process.env.VERCEL === "1",
     sameSite: "lax",
     path: "/",
     expires: expiresAt,
