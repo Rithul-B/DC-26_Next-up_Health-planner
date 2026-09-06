@@ -16,6 +16,7 @@ Any family can start their own house and add their own people. You are not locke
 - **Join with a code** or a share link (`/join?code=XXXXXX`).
 - **Helper** or **person** — same board. Helpers add steps and checkups.
 - **Sample house** — code `NEXTUP` (You, Dad, Sam) so a first visit is not empty.
+- **Stay on this device only** — starts with just you in this browser. It does not silently load Dad and Sam.
 
 Cookie sessions keep you signed in. You can join with the house code (and the optional password). No Clerk or Auth0 required.
 

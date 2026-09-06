@@ -72,7 +72,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           )}
         </main>
       </div>
-      {!showWelcome ? <BottomNav /> : null}
+      {!showWelcome && !onJoin ? <BottomNav /> : null}
     </div>
   );
 }

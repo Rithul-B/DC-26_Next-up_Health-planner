@@ -72,8 +72,8 @@ export function WelcomeScreen() {
             Stay on this device only
           </Button>
           <p className="text-sm text-muted-foreground">
-            Sample house uses code {DEMO_JOIN_CODE} (You, Dad, Sam). Your own
-            house can use any names.
+            This device starts with just you. You, Dad, and Sam are the sample
+            house (code {DEMO_JOIN_CODE}), not your household.
           </p>
         </div>
       ) : null}

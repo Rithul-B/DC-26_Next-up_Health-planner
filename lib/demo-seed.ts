@@ -1,11 +1,19 @@
+import {
+  demoFamilyRecords,
+  isStaleDemoFamilyRow,
+} from "@/lib/demo-family";
 import { prisma } from "@/lib/db";
+import { sampleItems, samplePeople } from "@/lib/seed";
 import { DEMO_JOIN_CODE } from "@/lib/types";
 
 export async function ensureDemoHousehold() {
   const existing = await prisma.household.findUnique({
     where: { joinCode: DEMO_JOIN_CODE },
   });
-  if (existing) return existing;
+  if (existing) {
+    await refreshDemoHousehold(existing.id, existing.name);
+    return existing;
+  }
 
   try {
     return await createDemoHousehold();
@@ -13,8 +21,36 @@ export async function ensureDemoHousehold() {
     const again = await prisma.household.findUnique({
       where: { joinCode: DEMO_JOIN_CODE },
     });
-    if (again) return again;
+    if (again) {
+      await refreshDemoHousehold(again.id, again.name);
+      return again;
+    }
     throw new Error("Could not open the sample house.");
+  }
+}
+
+async function refreshDemoHousehold(householdId: string, name: string) {
+  if (name === "Demo house") {
+    await prisma.household.update({
+      where: { id: householdId },
+      data: { name: "Sample house" },
+    });
+  }
+
+  const rows = await prisma.familyRecord.findMany({
+    where: { householdId },
+  });
+  const fresh = demoFamilyRecords();
+  const byId = new Map(fresh.map((row) => [row.id, row]));
+
+  for (const row of rows) {
+    if (!isStaleDemoFamilyRow(row)) continue;
+    const update = byId.get(row.id);
+    if (!update) continue;
+    await prisma.familyRecord.update({
+      where: { id: row.id },
+      data: { lastDone: update.lastDone, due: update.due },
+    });
   }
 }
 
@@ -22,17 +58,19 @@ async function createDemoHousehold() {
   const household = await prisma.household.create({
     data: {
       id: "demo-household",
-      name: "Demo house",
+      name: "Sample house",
       joinCode: DEMO_JOIN_CODE,
     },
   });
 
   await prisma.person.createMany({
-    data: [
-      { id: "you", householdId: household.id, name: "You", talkStyle: "plain", sortOrder: 0 },
-      { id: "dad", householdId: household.id, name: "Dad", talkStyle: "few-words", sortOrder: 1 },
-      { id: "sam", householdId: household.id, name: "Sam", talkStyle: "encouraging", sortOrder: 2 },
-    ],
+    data: samplePeople.map((person, sortOrder) => ({
+      id: person.id,
+      householdId: household.id,
+      name: person.name,
+      talkStyle: person.talkStyle,
+      sortOrder,
+    })),
   });
 
   await prisma.member.create({
@@ -46,99 +84,28 @@ async function createDemoHousehold() {
   });
 
   await prisma.personalItem.createMany({
-    data: [
-      {
-        id: "you-vitamin",
-        householdId: household.id,
-        personId: "you",
-        kind: "med",
-        title: "Morning vitamin",
-        timeOfDay: "morning",
-        weight: "everyday",
-        note: "The small bottle by the kettle.",
-      },
-      {
-        id: "you-walk",
-        householdId: household.id,
-        personId: "you",
-        kind: "appointment",
-        title: "Afternoon walk",
-        timeOfDay: "afternoon",
-        weight: "important",
-        note: "Ten minutes around the block is enough.",
-      },
-      {
-        id: "dad-bp",
-        householdId: household.id,
-        personId: "dad",
-        kind: "med",
-        title: "Blood pressure tablet",
-        timeOfDay: "morning",
-        weight: "important",
-        note: "With water. After breakfast.",
-      },
-      {
-        id: "dad-heart",
-        householdId: household.id,
-        personId: "dad",
-        kind: "med",
-        title: "Evening heart tablet",
-        timeOfDay: "evening",
-        weight: "critical",
-        note: "This one cannot wait until tomorrow.",
-      },
-      {
-        id: "sam-inhaler",
-        householdId: household.id,
-        personId: "sam",
-        kind: "med",
-        title: "Inhaler before sport",
-        timeOfDay: "afternoon",
-        weight: "everyday",
-        note: "Two puffs. Then go play.",
-      },
-    ],
+    data: sampleItems.map((item) => ({
+      id: item.id,
+      householdId: household.id,
+      personId: item.personId,
+      kind: item.kind,
+      title: item.title,
+      timeOfDay: item.timeOfDay,
+      weight: item.weight,
+      note: item.note ?? null,
+    })),
   });
 
   await prisma.familyRecord.createMany({
-    data: [
-      {
-        id: "flu-all",
-        householdId: household.id,
-        kind: "vaccine",
-        who: "wholeFamily",
-        lastDone: "2025-10-18",
-        due: "2026-10-15",
-        note: "Everyone. Same clinic as last year.",
-      },
-      {
-        id: "dad-physical",
-        householdId: household.id,
-        kind: "checkup",
-        who: "dad",
-        lastDone: "2025-03-12",
-        due: "2026-03-12",
-        note: "Annual physical. Ask for the blood work printout.",
-      },
-      {
-        id: "sam-dentist",
-        householdId: household.id,
-        kind: "dentist",
-        who: "sam",
-        lastDone: "2026-06-08",
-        due: "2026-12-08",
-        note: "Cleaning. Just a name on the board.",
-      },
-      {
-        id: "you-eyes",
-        householdId: household.id,
-        kind: "eyes",
-        who: "you",
-        lastDone: "2026-04-22",
-        due: "2027-04-22",
-        note: "All clear this year.",
-      },
-    ],
+    data: demoFamilyRecords().map((row) => ({
+      id: row.id,
+      householdId: household.id,
+      kind: row.kind,
+      who: row.who,
+      lastDone: row.lastDone,
+      due: row.due,
+      note: row.note ?? null,
+    })),
   });
 
   return household;

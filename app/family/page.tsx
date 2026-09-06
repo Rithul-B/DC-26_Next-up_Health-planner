@@ -102,7 +102,16 @@ export default function FamilyPage() {
         ))}
       </div>
 
-      {rows.length === 0 ? (
+      {state.family.length === 0 ? (
+        <WeightCard weight={screenWeight}>
+          <EmptyMark className="mb-3 h-14 w-14" />
+          <p className="text-lg">No shared checkups yet.</p>
+          <p className="mt-2 text-muted-foreground">
+            Family Center is empty until someone adds a visit. The You / Dad /
+            Sam sample has example checkups if you want to see one.
+          </p>
+        </WeightCard>
+      ) : rows.length === 0 ? (
         <WeightCard weight={screenWeight}>
           <EmptyMark className="mb-3 h-14 w-14" />
           <p className="text-lg">Nothing in this view.</p>

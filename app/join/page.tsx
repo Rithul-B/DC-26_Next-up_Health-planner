@@ -9,7 +9,8 @@ import { Label } from "@/components/ui/label";
 import { useStore } from "@/lib/store";
 import type { Role } from "@/lib/types";
 import { DEMO_JOIN_CODE } from "@/lib/types";
-import { useSearchParams } from "next/navigation";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 
 export default function JoinPage() {
@@ -24,6 +25,7 @@ export default function JoinPage() {
 
 function JoinForm() {
   const params = useSearchParams();
+  const router = useRouter();
   const { joinHousehold, state } = useStore();
   const [code, setCode] = useState(
     (params.get("code") ?? "").toUpperCase(),
@@ -143,12 +145,24 @@ function JoinForm() {
               addPerson: true,
             });
             setBusy(false);
-            if (message) setError(message);
+            if (message) {
+              setError(message);
+              return;
+            }
+            router.replace("/");
           }}
         >
           Join
         </Button>
         {error ? <p className="text-destructive">{error}</p> : null}
+        <Button
+          nativeButton={false}
+          render={<Link href="/" />}
+          variant="ghost"
+          className="h-11"
+        >
+          Back to Now
+        </Button>
       </WeightCard>
     </div>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import { householdLine } from "@/lib/copy";
+import { looksLikeSamplePeople } from "@/lib/demo-family";
 import { householdRows, personTint } from "@/lib/period";
 import { useStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
@@ -27,7 +28,9 @@ export function HouseholdPresence({
           ? "Household"
           : state.household?.name
             ? state.household.name
-            : "In this house"}
+            : looksLikeSamplePeople(state.people)
+              ? "Sample on this device"
+              : "On this device"}
       </p>
       {rows.length === 0 ? (
         <p className="text-sm text-muted-foreground">No people yet.</p>

@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { requestReminderPermission } from "@/lib/notify";
+import { looksLikeSamplePeople } from "@/lib/demo-family";
 import { STORE_KEY } from "@/lib/seed";
 import { LOCAL_ONLY_KEY, useStore } from "@/lib/store";
 import Link from "next/link";
@@ -32,8 +33,9 @@ export default function SettingsPage() {
         <WeightCard>
           <h2 className="text-xl font-semibold">On this device only</h2>
           <p className="mt-2 text-muted-foreground">
-            This browser is not signed into a shared house. Start or join one
-            to sync phones.
+            {looksLikeSamplePeople(state.people)
+              ? "This browser is using the You / Dad / Sam sample. Those names are examples, not your household. Start or join a house to use your own names and sync phones."
+              : "This browser is not signed into a shared house. Start or join one to sync phones. Add people from Easier if you want more than you."}
           </p>
           <Button
             variant="outline"
@@ -160,7 +162,7 @@ export default function SettingsPage() {
               window.location.href = "/";
             }}
           >
-            Reset local demo data
+            Reset this device
           </Button>
         )}
       </WeightCard>

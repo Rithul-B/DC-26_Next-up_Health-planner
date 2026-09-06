@@ -11,6 +11,7 @@ import {
 } from "react";
 import { familyKindLabels } from "@/lib/copy";
 import { completionKey, todayKey } from "@/lib/dates";
+import { refreshStaleFamily } from "@/lib/demo-family";
 import { seedState, STORE_KEY } from "@/lib/seed";
 import type {
   AppState,
@@ -120,6 +121,7 @@ function loadLocalState(): AppState {
     if (!raw) return { ...seedState, ease };
     const parsed = JSON.parse(raw) as Partial<AppState>;
     if (!parsed.people?.length) return { ...seedState, ease };
+    const family = refreshStaleFamily(parsed.family ?? seedState.family);
     return {
       ...seedState,
       ...parsed,
@@ -129,7 +131,7 @@ function loadLocalState(): AppState {
       completions: parsed.completions ?? {},
       postponed: parsed.postponed ?? {},
       checkIns: parsed.checkIns ?? {},
-      family: parsed.family ?? seedState.family,
+      family,
       role: parsed.role === "helper" ? "helper" : "person",
       activePersonId: parsed.activePersonId ?? seedState.activePersonId,
       sync: "local",
