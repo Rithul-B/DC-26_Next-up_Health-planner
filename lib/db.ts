@@ -5,7 +5,7 @@ const globalForPrisma = globalThis as unknown as {
 };
 
 function createClient() {
-  const url = process.env.DATABASE_URL?.trim() || "file:./prisma/dev.db";
+  const url = process.env.DATABASE_URL?.trim() || "file:./dev.db";
   if (!process.env.DATABASE_URL) {
     process.env.DATABASE_URL = url;
   }

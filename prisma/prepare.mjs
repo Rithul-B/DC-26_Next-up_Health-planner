@@ -6,7 +6,7 @@ const schemaPath = path.join(import.meta.dirname, "schema.prisma");
 const envPath = path.join(root, ".env");
 
 const fromEnv = process.env.DATABASE_URL?.trim();
-const url = fromEnv || "file:./prisma/dev.db";
+const url = fromEnv || "file:./dev.db";
 if (!fromEnv) {
   process.env.DATABASE_URL = url;
 }
