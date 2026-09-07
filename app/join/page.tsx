@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useStore } from "@/lib/store";
-import type { Role } from "@/lib/types";
 import { DEMO_JOIN_CODE } from "@/lib/types";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -26,15 +25,14 @@ export default function JoinPage() {
 function JoinForm() {
   const params = useSearchParams();
   const router = useRouter();
-  const { joinHousehold, state } = useStore();
-  const [code, setCode] = useState(
-    (params.get("code") ?? "").toUpperCase(),
-  );
-  const [name, setName] = useState("");
+  const { joinHousehold, claimInvite, state } = useStore();
+  const [code, setCode] = useState((params.get("code") ?? "").toUpperCase());
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState<Role>("person");
+  const [inviteCode, setInviteCode] = useState("");
+  const [viewEveryone, setViewEveryone] = useState(true);
+  const [mode, setMode] = useState<"join" | "claim">("join");
   const [houseName, setHouseName] = useState<string | null>(null);
-  const [needsPassword, setNeedsPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -52,13 +50,7 @@ function JoinForm() {
       void fetch(`/api/join/preview?code=${encodeURIComponent(code)}`)
         .then((res) => (res.ok ? res.json() : null))
         .then((data) => {
-          if (!data?.name) {
-            setHouseName(null);
-            setNeedsPassword(false);
-            return;
-          }
-          setHouseName(data.name);
-          setNeedsPassword(Boolean(data.hasPassword));
+          setHouseName(data?.name ?? null);
         })
         .catch(() => null);
     }, 250);
@@ -82,78 +74,154 @@ function JoinForm() {
       </PageIntro>
 
       <WeightCard className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="code">Join code</Label>
-          <Input
-            id="code"
-            value={code}
-            onChange={(e) => setCode(e.target.value.toUpperCase())}
-            className="h-12 text-base tracking-wide"
-            placeholder={DEMO_JOIN_CODE}
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="name">Your first name</Label>
-          <Input
-            id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="h-12 text-base"
-          />
-        </div>
-        {needsPassword ? (
-          <div className="space-y-2">
-            <Label htmlFor="password">House password</Label>
-            <Input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="h-12 text-base"
-            />
-          </div>
-        ) : null}
-        <div className="flex flex-col gap-2">
+        <div className="flex gap-2">
           <Button
             type="button"
-            variant={role === "person" ? "default" : "outline"}
-            className="h-12 justify-start rounded-2xl"
-            onClick={() => setRole("person")}
+            variant={mode === "join" ? "default" : "outline"}
+            className="h-12 flex-1 rounded-2xl"
+            onClick={() => setMode("join")}
           >
-            For me
+            House code
           </Button>
           <Button
             type="button"
-            variant={role === "helper" ? "default" : "outline"}
-            className="h-12 justify-start rounded-2xl"
-            onClick={() => setRole("helper")}
+            variant={mode === "claim" ? "default" : "outline"}
+            className="h-12 flex-1 rounded-2xl"
+            onClick={() => setMode("claim")}
           >
-            I’m helping
+            Invite code
           </Button>
         </div>
-        <Button
-          className="h-14 w-full rounded-2xl text-lg"
-          disabled={busy || !code.trim() || !name.trim()}
-          onClick={async () => {
-            setBusy(true);
-            setError(null);
-            const message = await joinHousehold({
-              code: code.trim(),
-              name: name.trim(),
-              password: password.trim() || undefined,
-              role,
-              addPerson: true,
-            });
-            setBusy(false);
-            if (message) {
-              setError(message);
-              return;
-            }
-            router.replace("/");
-          }}
-        >
-          Join
-        </Button>
+
+        {mode === "join" ? (
+          <>
+            <div className="space-y-2">
+              <Label htmlFor="code">House code</Label>
+              <Input
+                id="code"
+                value={code}
+                onChange={(e) => setCode(e.target.value.toUpperCase())}
+                className="h-14 text-lg tracking-wide"
+                placeholder={DEMO_JOIN_CODE}
+              />
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Sample house ({DEMO_JOIN_CODE}) needs only the code. A real house
+              needs the email the head added, plus your password.
+            </p>
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="h-14 text-lg"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="h-14 text-lg"
+              />
+            </div>
+            <Button
+              className="h-14 w-full rounded-2xl text-lg"
+              disabled={busy || !code.trim()}
+              onClick={async () => {
+                setBusy(true);
+                setError(null);
+                const message = await joinHousehold({
+                  code: code.trim(),
+                  email: email.trim() || undefined,
+                  password: password.trim() || undefined,
+                });
+                setBusy(false);
+                if (message) {
+                  setError(message);
+                  return;
+                }
+                router.replace("/");
+              }}
+            >
+              Join
+            </Button>
+          </>
+        ) : (
+          <>
+            <div className="space-y-2">
+              <Label htmlFor="claim-email">Email</Label>
+              <Input
+                id="claim-email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="h-14 text-lg"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="invite">Invite code</Label>
+              <Input
+                id="invite"
+                value={inviteCode}
+                onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
+                className="h-14 text-lg tracking-wide"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="new-pass">New password</Label>
+              <Input
+                id="new-pass"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="h-14 text-lg"
+              />
+            </div>
+            <Button
+              type="button"
+              variant={viewEveryone ? "default" : "outline"}
+              className="h-14 justify-start rounded-2xl"
+              onClick={() => setViewEveryone(true)}
+            >
+              See everyone
+            </Button>
+            <Button
+              type="button"
+              variant={!viewEveryone ? "default" : "outline"}
+              className="h-14 justify-start rounded-2xl"
+              onClick={() => setViewEveryone(false)}
+            >
+              Only me
+            </Button>
+            <Button
+              className="h-14 w-full rounded-2xl text-lg"
+              disabled={busy || !email.trim() || !inviteCode.trim() || !password}
+              onClick={async () => {
+                setBusy(true);
+                setError(null);
+                const message = await claimInvite(
+                  email.trim(),
+                  inviteCode.trim(),
+                  password,
+                  viewEveryone,
+                );
+                setBusy(false);
+                if (message) {
+                  setError(message);
+                  return;
+                }
+                router.replace("/");
+              }}
+            >
+              Claim invite
+            </Button>
+          </>
+        )}
         {error ? <p className="text-destructive">{error}</p> : null}
         <Button
           nativeButton={false}

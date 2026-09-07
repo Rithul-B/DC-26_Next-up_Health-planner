@@ -6,11 +6,17 @@ export type ItemKind = "med" | "appointment";
 export type FamilyKind = "checkup" | "dentist" | "eyes" | "vaccine" | "other";
 export type CheckInFeeling = "good" | "ok" | "hard";
 export type SyncMode = "local" | "household";
+export type NeedReason = "checkups" | "reminders" | "advice" | "meds";
 
 export type Person = {
   id: string;
   name: string;
   talkStyle: TalkStyle;
+  age?: number;
+  weightNote?: string;
+  heightNote?: string;
+  conditions?: string;
+  extraNotes?: string;
 };
 
 export type PersonalItem = {
@@ -34,11 +40,21 @@ export type FamilyRecord = {
   note?: string;
 };
 
+export type SymptomNote = {
+  id: string;
+  personId: string;
+  feltOn: string;
+  body: string;
+};
+
 export type EaseSettings = {
   largeText: boolean;
+  extraLargeText: boolean;
   highContrast: boolean;
   reduceMotion: boolean;
   reminders: boolean;
+  fewWords: boolean;
+  hideExtra: boolean;
 };
 
 export type HouseholdInfo = {
@@ -48,6 +64,16 @@ export type HouseholdInfo = {
   hasPassword: boolean;
 };
 
+export type InviteInfo = {
+  id: string;
+  name: string;
+  email: string;
+  inviteCode: string | null;
+  claimed: boolean;
+  isHead: boolean;
+  personId: string | null;
+};
+
 export type HouseholdSnapshot = {
   people: Person[];
   items: PersonalItem[];
@@ -55,6 +81,7 @@ export type HouseholdSnapshot = {
   postponed: Record<string, string[]>;
   checkIns: Record<string, CheckInFeeling>;
   family: FamilyRecord[];
+  symptoms: SymptomNote[];
 };
 
 export type AppState = HouseholdSnapshot & {
@@ -65,6 +92,14 @@ export type AppState = HouseholdSnapshot & {
   dbAvailable: boolean;
   household: HouseholdInfo | null;
   memberName: string | null;
+  isHead: boolean;
+  viewEveryone: boolean;
+  email: string | null;
+  memberId: string | null;
+  userId: string | null;
+  reasons: NeedReason[];
+  invites: InviteInfo[];
+  mailSent: boolean;
 };
 
 export const WHOLE_FAMILY = "wholeFamily";
@@ -85,3 +120,6 @@ export const FALLBACK_PERSON: Person = {
 };
 
 export const DEMO_JOIN_CODE = "NEXTUP";
+
+export const MEDICAL_DISCLAIMER =
+  "Next Up is a planner. It is not a diagnosis, not a prescription, and not a replacement for a clinician, pharmacist, or therapist. If you feel unsafe or this is an emergency, get urgent help now.";

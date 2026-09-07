@@ -16,13 +16,16 @@ export function AppShell({ children }: { children: ReactNode }) {
   const period = clockPeriod();
   const pathname = usePathname();
   const onJoin = pathname.startsWith("/join");
-  const showWelcome = ready && phase === "welcome" && !onJoin;
+  const showWelcome = ready && (phase === "welcome" || phase === "notify") && !onJoin;
 
   useEffect(() => {
     const root = document.documentElement;
     root.classList.toggle("large-text", state.ease.largeText);
+    root.classList.toggle("extra-large-text", state.ease.extraLargeText);
     root.classList.toggle("high-contrast", state.ease.highContrast);
     root.classList.toggle("reduce-motion", state.ease.reduceMotion);
+    root.classList.toggle("few-words", state.ease.fewWords);
+    root.classList.toggle("hide-extra", state.ease.hideExtra);
     root.dataset.weight = screenWeight;
     root.dataset.period = period;
     root.classList.toggle("dark", screenWeight === "critical");

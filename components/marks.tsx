@@ -205,7 +205,7 @@ export function NavGlyph({
   name,
   className,
 }: {
-  name: "now" | "today" | "family" | "easier";
+  name: "now" | "today" | "family" | "advice" | "easier";
   className?: string;
 }) {
   if (name === "now") {
@@ -228,6 +228,14 @@ export function NavGlyph({
       <Frame className={className}>
         <path className="mark-stroke" d="M20 46L48 22l28 24v28H20z" />
         <path className="mark-fill" d="M42 56h12v18H42z" />
+      </Frame>
+    );
+  }
+  if (name === "advice") {
+    return (
+      <Frame className={className}>
+        <circle className="mark-fill-soft" cx="48" cy="48" r="26" />
+        <path className="mark-stroke" d="M48 30v22M48 64v2" />
       </Frame>
     );
   }

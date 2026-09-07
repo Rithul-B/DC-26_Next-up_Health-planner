@@ -1,8 +1,8 @@
-import { dbAvailable, prisma } from "@/lib/db";
+import { sessionBundle } from "@/lib/auth-payload";
+import { dbAvailable } from "@/lib/db";
 import { ensureDemoHousehold } from "@/lib/demo-seed";
 import { createSession } from "@/lib/session";
-import { householdPublic, readSnapshot } from "@/lib/snapshot";
-import { DEMO_JOIN_CODE } from "@/lib/types";
+import { prisma } from "@/lib/db";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -36,14 +36,5 @@ export async function POST() {
     role: "person",
   });
 
-  return NextResponse.json({
-    household: householdPublic({
-      ...household,
-      joinCode: household.joinCode || DEMO_JOIN_CODE,
-    }),
-    state: await readSnapshot(household.id),
-    role: "person",
-    personId: member.personId ?? "you",
-    memberName: member.name,
-  });
+  return NextResponse.json(await sessionBundle());
 }

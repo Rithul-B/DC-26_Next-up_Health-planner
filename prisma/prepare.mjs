@@ -29,6 +29,7 @@ if (!fs.existsSync(envPath)) {
       `# Local default. Vercel/Postgres: set DATABASE_URL in the host, do not commit secrets.`,
       `DATABASE_URL="${url}"`,
       `SESSION_SECRET="next-up-local-dev-only"`,
+      `# Optional Web Push: npm run vapid`,
       "",
     ].join("\n"),
   );

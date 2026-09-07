@@ -1,6 +1,13 @@
-import { dbAvailable } from "@/lib/db";
+import { sessionBundle } from "@/lib/auth-payload";
+import { dbAvailable, prisma } from "@/lib/db";
 import { currentSession } from "@/lib/session";
-import { householdPublic, readSnapshot, writeSnapshot } from "@/lib/snapshot";
+import {
+  filterSnapshot,
+  householdPublic,
+  mergeMemberSnapshot,
+  readSnapshot,
+  writeSnapshot,
+} from "@/lib/snapshot";
 import type { HouseholdSnapshot } from "@/lib/types";
 import { NextResponse } from "next/server";
 
@@ -10,18 +17,11 @@ export async function GET() {
   if (!(await dbAvailable())) {
     return NextResponse.json({ db: false }, { status: 503 });
   }
-  const session = await currentSession();
-  if (!session) {
+  const payload = await sessionBundle();
+  if (!payload) {
     return NextResponse.json({ error: "Sign in again." }, { status: 401 });
   }
-  return NextResponse.json({
-    db: true,
-    household: householdPublic(session.household),
-    state: await readSnapshot(session.householdId),
-    role: session.role,
-    personId: session.personId,
-    memberName: session.member.name,
-  });
+  return NextResponse.json({ db: true, ...payload });
 }
 
 export async function PUT(request: Request) {
@@ -38,17 +38,34 @@ export async function PUT(request: Request) {
     return NextResponse.json({ error: "That save did not look right." }, { status: 400 });
   }
 
-  await writeSnapshot(session.householdId, {
+  const member = await prisma.member.findUnique({ where: { id: session.memberId } });
+  const isHead = Boolean(member?.isHead);
+  const viewEveryone = isHead ? true : Boolean(member?.viewEveryone);
+  const incoming: HouseholdSnapshot = {
     people: body.people,
     items: body.items,
     completions: body.completions ?? {},
     postponed: body.postponed ?? {},
     checkIns: body.checkIns ?? {},
     family: body.family ?? [],
-  });
+    symptoms: body.symptoms ?? [],
+  };
 
+  const toWrite =
+    isHead || viewEveryone
+      ? incoming
+      : mergeMemberSnapshot(
+          await readSnapshot(session.householdId),
+          incoming,
+          session.personId,
+        );
+
+  await writeSnapshot(session.householdId, toWrite);
+
+  const full = await readSnapshot(session.householdId);
   return NextResponse.json({
     ok: true,
-    state: await readSnapshot(session.householdId),
+    state: filterSnapshot(full, session.personId, viewEveryone, isHead),
+    household: householdPublic(session.household),
   });
 }

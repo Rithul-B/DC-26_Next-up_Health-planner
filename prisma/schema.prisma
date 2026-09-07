@@ -7,11 +7,24 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  passwordHash String?
+  reasons      String    @default("")
+  createdAt    DateTime  @default(now())
+  memberships  Member[]
+  headedHouses Household[] @relation("HouseholdHead")
+  pushSubs     PushSub[]
+}
+
 model Household {
   id           String         @id @default(cuid())
   name         String
   joinCode     String         @unique
   passwordHash String?
+  headUserId   String?
+  headUser     User?          @relation("HouseholdHead", fields: [headUserId], references: [id], onDelete: SetNull)
   createdAt    DateTime       @default(now())
   members      Member[]
   people       Person[]
@@ -21,17 +34,24 @@ model Household {
   checkIns     CheckIn[]
   family       FamilyRecord[]
   sessions     Session[]
+  symptoms     SymptomNote[]
 }
 
 model Member {
-  id          String     @id @default(cuid())
-  householdId String
-  household   Household  @relation(fields: [householdId], references: [id], onDelete: Cascade)
-  name        String
-  role        String     @default("person")
-  personId    String?
-  createdAt   DateTime   @default(now())
-  sessions    Session[]
+  id           String     @id @default(cuid())
+  householdId  String
+  household    Household  @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  userId       String?    @unique
+  user         User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
+  name         String
+  role         String     @default("person")
+  personId     String?
+  isHead       Boolean    @default(false)
+  viewEveryone Boolean    @default(true)
+  inviteCode   String?    @unique
+  claimedAt    DateTime?
+  createdAt    DateTime   @default(now())
+  sessions     Session[]
 }
 
 model Session {
@@ -53,6 +73,11 @@ model Person {
   name        String
   talkStyle   String
   sortOrder   Int       @default(0)
+  age         Int?
+  weightNote  String?
+  heightNote  String?
+  conditions  String?
+  extraNotes  String?
 }
 
 model PersonalItem {
@@ -111,4 +136,24 @@ model FamilyRecord {
   lastDone    String
   due         String
   note        String?
+}
+
+model SymptomNote {
+  id          String    @id @default(cuid())
+  householdId String
+  household   Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  personId    String
+  feltOn      String
+  body        String
+  createdAt   DateTime  @default(now())
+}
+
+model PushSub {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
 }

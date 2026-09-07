@@ -58,9 +58,12 @@ export const sampleItems: PersonalItem[] = [
 
 const ease = {
   largeText: false,
+  extraLargeText: false,
   highContrast: false,
   reduceMotion: false,
   reminders: false,
+  fewWords: false,
+  hideExtra: false,
 };
 
 /** Local-only start: just you. The You / Dad / Sam cast is the sample house. */
@@ -78,4 +81,13 @@ export const seedState: AppState = {
   postponed: {},
   checkIns: {},
   family: [],
+  symptoms: [],
+  isHead: false,
+  viewEveryone: true,
+  email: null,
+  memberId: null,
+  userId: null,
+  reasons: [],
+  invites: [],
+  mailSent: false,
 };
